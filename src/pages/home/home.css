@@ -34,6 +34,7 @@
     font-weight: 400;
     font-size: 40px;
     line-height: 38px;
+    text-transform: uppercase;
     color: black;
 }
 
@@ -46,7 +47,12 @@
     margin: 0 0.5rem;
     width: auto;
     height: 38px;   
-    color: rgb(72, 72, 72);
+    color: rgb(114, 114, 114);
+}
+
+.home_head_links h1:hover {
+    color: black;
+    transition: transform 0.25s ease-in-out;
 }
 
 .home_categories {
@@ -54,12 +60,14 @@
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    z-index: 2;
 }
 
-.home_categories h1 {
+.home_categories p {
     font-family: 'Italiana';
     font-style: normal;
     font-weight: 400;
+    font-size: 24px;
     color: black;
     padding: 0 3rem;
     text-transform: uppercase;
@@ -101,6 +109,8 @@
     margin-top: auto;
 }
 
+
+/* categories selection */
 .active {
     display: inline-block;
     position: relative;
@@ -115,7 +125,7 @@
     transform: scaleX(1);
     height: 2px;
     bottom: 0;
-    left: 18px;
+    left: 16px;
     background-color: black;
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
@@ -135,7 +145,7 @@
     transform: scaleX(0);
     height: 1px;
     bottom: 0;
-    left: 18px;
+    left: 16px;
     background-color: black;
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
@@ -143,5 +153,6 @@
   
 .inactive:hover::after {
     transform: scaleX(1);
+    height: 1px;
     transform-origin: bottom left;
   }
