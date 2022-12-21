@@ -1,5 +1,4 @@
 import { React, useEffect, useState } from 'react';
-import { NavLink } from "react-router-dom";
 import './home.css';
 import { Gallery } from '../../components';
 import axios from 'axios';

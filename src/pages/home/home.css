@@ -105,6 +105,7 @@
     display: inline-block;
     position: relative;
     color: black;
+    cursor: pointer;
 }
 
 .active::after {
@@ -124,6 +125,7 @@
     display: inline-block;
     position: relative;
     color: black;
+    cursor: pointer;
   }
 
 .inactive::after {
