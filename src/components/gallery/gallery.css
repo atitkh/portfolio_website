@@ -7,7 +7,7 @@
     height: 100%;
     background-color: #fff;
     overflow: hidden;
-    padding: 2.5rem 0rem;
+    margin: 2.5rem 0rem;
 }
 
 .gallery_item:hover{
@@ -71,10 +71,11 @@
 .gallery_item_info .gallery_item_info_description p {
     font-size: 14px;
     font-weight: 400;
-    padding: 2rem 0rem;
-    margin: 0;
+    padding: 1.7rem 0rem;
+    margin-bottom: 0;
     height: 100px;
     width: 100%;
+
     overflow-y: scroll;
     overflow-x: hidden;
 }
@@ -101,6 +102,7 @@
 
 .gallery_item_info .gallery_item_info_url a {
     color: white;
+    margin: 0.25rem;
 }
 
 .gallery_item:hover .gallery_item_info_bg, .gallery_item:hover .gallery_item_info{
