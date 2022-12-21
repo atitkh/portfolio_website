@@ -59,9 +59,10 @@
 .home_categories h1 {
     font-family: 'Italiana';
     font-style: normal;
-    font-weight: 500;
+    font-weight: 400;
     color: black;
     padding: 0 3rem;
+    text-transform: uppercase;
 }
 
 .home_title {
@@ -101,13 +102,44 @@
 }
 
 .active {
-    text-decoration: underline;
-    color: #000;
-    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    color: black;
 }
 
-.inactive:hover {
-    color: #000;
-    text-decoration: underline;
-    cursor: pointer;
+.active::after {
+    content: '';
+    position: absolute;
+    width: 80%;
+    transform: scaleX(1);
+    height: 2px;
+    bottom: 0;
+    left: 18px;
+    background-color: black;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
 }
+
+.inactive {
+    display: inline-block;
+    position: relative;
+    color: black;
+  }
+
+.inactive::after {
+    content: '';
+    position: absolute;
+    width: 80%;
+    transform: scaleX(0);
+    height: 1px;
+    bottom: 0;
+    left: 18px;
+    background-color: black;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+  }
+  
+.inactive:hover::after {
+    transform: scaleX(1);
+    transform-origin: bottom left;
+  }

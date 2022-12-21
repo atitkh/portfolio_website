@@ -35,7 +35,7 @@ function Home() {
             </div>
             <div className="home_categories">
                 {categories.map((item, index) => (
-                    <div className={currentCategory === item ? 'active' : 'inactive'}><h1 onClick={() => setCurrentCategory(item) }>{item}</h1></div>
+                    <div><h1 onClick={() => setCurrentCategory(item) } className={currentCategory === item ? 'active' : 'inactive'}>{item}</h1></div>
                 ))}
             </div>
             <div className='home_gallery'>
