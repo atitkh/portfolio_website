@@ -2,13 +2,13 @@ import React from 'react'
 import './gallery.css'
 import { GitHub } from "@mui/icons-material"
 
-function Gallery({ image, video, title, description, gitLink, categories, date }) {
+function Gallery({ key, image, video, title, description, gitLink, categories, date }) {
     return (
         <div className='gallery_item'>
             <div className='gallery_item_image'>
-                <img src={image} alt='gallery' />
+                <img src={image} alt='gallery' key={key} />
             </div> 
-            <div className='gallery_item_info'>
+            <div className='gallery_item_info hidden'>
                 <div className='gallery_item_info_title'>
                     <h2>{title}</h2>
                 </div>
@@ -17,8 +17,8 @@ function Gallery({ image, video, title, description, gitLink, categories, date }
                 </div>
                 <div className='gallery_item_info_categories'>
                     <h4>
-                        {categories.map((item) => (
-                            <span>{item}, </span>
+                        {categories.map((item, index) => (
+                            <span>{item} </span>
                         ))}
                     </h4>
                 </div>
