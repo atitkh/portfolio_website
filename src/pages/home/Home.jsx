@@ -6,17 +6,19 @@ import { GitHub, LinkedIn } from "@mui/icons-material"
 
 function Home() {
     
-    const [portfolioData, setPortfolio] = useState([]) 
-    const [categories, setCategories] = useState([])
+    const [mainTitle, setMainTitle] = useState('')
     const [socialLinks, setSocialLinks] = useState([]) 
+    const [categories, setCategories] = useState([])
     const [currentCategory, setCurrentCategory] = useState('All')
+    const [portfolioData, setPortfolio] = useState([]) 
 
     useEffect(() => {
         const fetchData = async () => {
             const result = await axios.get('https://api.atitkharel.com.np/portfolio/ashlesha/')
-            setPortfolio(result.data.portfolio);
-            setCategories(result.data.main_categories);
+            setMainTitle(result.data.title);
             setSocialLinks(result.data.social_links);
+            setCategories(result.data.main_categories);
+            setPortfolio(result.data.portfolio);
         }
         fetchData();
     }, [])
@@ -25,7 +27,7 @@ function Home() {
         <div className='home'>
             <div className="home_head">
                 <div className="home_head_name">
-                    <h1>ASHLESHA MALLA</h1>
+                    <h1>{mainTitle}</h1>
                 </div>
                 <div className="home_head_links">
                     <a href={socialLinks.github} target="_blank" rel="noreferrer"><h1><GitHub fontSize='large' /></h1></a>
