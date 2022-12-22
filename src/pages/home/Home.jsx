@@ -14,7 +14,7 @@ function Home() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await axios.get('https://api.atitkharel.com.np/portfolio/ashlesha/')
+            const result = await axios.get('https://api.atitkharel.com.np/portfolio/atit/')
             setMainTitle(result.data.title);
             setSocialLinks(result.data.social_links);
             setCategories(result.data.main_categories);
