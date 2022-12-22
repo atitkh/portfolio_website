@@ -42,7 +42,7 @@ function Home() {
             <div className='home_gallery'>
                 {portfolioData.map((item, index) => (
                     <>{currentCategory === "All" ? <div><Gallery key={item.id} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}
-                    {currentCategory === item.mainCategory ? <div><Gallery key={item.id} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
+                    {(item.mainCategory).includes(currentCategory) ? <div><Gallery key={item.id} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
                 ))}
             </div>
         </div>
