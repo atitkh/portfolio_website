@@ -2,7 +2,7 @@ import { React, useEffect, useState } from 'react';
 import './home.css';
 import { Gallery } from '../../components';
 import axios from 'axios';
-import { GitHub, LinkedIn } from "@mui/icons-material"
+import { GitHub, LinkedIn, Language } from "@mui/icons-material"
 
 function Home() {
     
@@ -32,6 +32,7 @@ function Home() {
                 <div className="home_head_links">
                     <a href={socialLinks.github} target="_blank" rel="noreferrer"><h1><GitHub fontSize='large' /></h1></a>
                     <a href={socialLinks.linkedin} target="_blank" rel="noreferrer"><h1><LinkedIn fontSize='large' /></h1></a>
+                    <a href={socialLinks.website} target="_blank" rel="noreferrer"><h1><Language fontSize='large' /></h1></a>
                 </div>
             </div>
             <div className="home_categories">
