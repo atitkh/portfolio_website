@@ -12,11 +12,11 @@ body {
   --box-height: 383px;
   --box-border-radius: 5px;
 
-  --box-info-width: 210px;
-  --box-info-height: 345px;
+  --box-info-width: 180px;
+  --box-info-height: 370px;
   
-  --box-info-description-height: 90px;
-  --box-info-description-width: 180px;
+  --box-info-description-height: 100px;
+  --box-info-description-width: auto;
 }
 
 code {

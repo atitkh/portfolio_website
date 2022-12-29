@@ -49,7 +49,7 @@
     text-align: center;
     width: var(--box-info-width);
     height: var(--box-info-height);
-    max-height: 345px;
+    max-height: var(--box-info-height);
 
     color: white;
     opacity: 0;
