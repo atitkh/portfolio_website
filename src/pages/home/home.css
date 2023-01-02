@@ -17,10 +17,10 @@
 .home_head_name {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
+    justify-content: left;
+    align-items: left;
     background-size: cover;
-    text-align: center;
+    text-align: left;
 }
 
 .home_head_name h1 {
