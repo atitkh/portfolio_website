@@ -34,7 +34,7 @@ function Gallery({ key, image, video, title, description, projectLink, categorie
                     <div className='gallery_item_info_url'>
                         {projectLink.map((item, index) => (
                             <a href={item} target='_blank' rel='noreferrer'>
-                                {item.includes('github') ? <GitHub /> : <Language />} 
+                                {item.includes('github.com') ? <GitHub /> : <Language />} 
                             </a>
                         ))}
                     </div>
