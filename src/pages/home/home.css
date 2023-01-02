@@ -46,7 +46,7 @@
 .home_head_links h1 {
     margin: 0 0.5rem;
     width: auto;
-    height: 38px;   
+    height: 38px;
     color: rgb(114, 114, 114);
 }
 
@@ -71,8 +71,12 @@
     overflow-y: hidden;
     overscroll-behavior-inline: contain;
     width: 100%;
-    height: 100%;
+    height: auto;
     z-index: 2;
+}
+
+.home_categories:before,:after {
+    display: block;
 }
 
 .home_categories::-webkit-scrollbar {
@@ -114,7 +118,7 @@
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     grid-auto-rows: minmax(300px, 1fr);
     grid-auto-flow: dense;
-    
+
     align-items: center;
     justify-items: center;
     margin: 0 auto;
@@ -153,7 +157,7 @@
     position: relative;
     color: black;
     cursor: pointer;
-  }
+}
 
 .inactive::after {
     content: '';
@@ -166,13 +170,13 @@
     background-color: black;
     transform-origin: bottom right;
     transition: transform 0.25s ease-out;
-  }
-  
+}
+
 .inactive:hover::after {
     transform: scaleX(1);
     height: 1px;
     transform-origin: bottom left;
-  }
+}
 
 
 @media screen and (max-width: 768px) {

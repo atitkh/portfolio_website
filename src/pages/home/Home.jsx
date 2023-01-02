@@ -29,15 +29,15 @@ function Home() {
     if (loading) {
         return (
             <div className="loader-container">
-                <div class="wrapper">
-                    <span class="circle circle-1"></span>
-                    <span class="circle circle-2"></span>
-                    <span class="circle circle-3"></span>
-                    <span class="circle circle-4"></span>
-                    <span class="circle circle-5"></span>
-                    <span class="circle circle-6"></span>
-                    <span class="circle circle-7"></span>
-                    <span class="circle circle-8"></span>
+                <div className="wrapper">
+                    <span className="circle circle-1"></span>
+                    <span className="circle circle-2"></span>
+                    <span className="circle circle-3"></span>
+                    <span className="circle circle-4"></span>
+                    <span className="circle circle-5"></span>
+                    <span className="circle circle-6"></span>
+                    <span className="circle circle-7"></span>
+                    <span className="circle circle-8"></span>
                 </div>
             </div>
         );
