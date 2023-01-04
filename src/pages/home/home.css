@@ -126,8 +126,43 @@
     height: 100%;
 }
 
-.footer {
+.home_footer {
     margin-top: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0rem;
+    padding-bottom: 2rem;
+    width: auto;
+}
+
+.home_footer p {
+    margin: 0;
+    width: auto;
+    color: black;
+
+    font-family: 'Italiana';
+    font-style: normal;
+
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 38px;
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    text-align: center;
+    white-space: pre-wrap;
+}
+
+.home_footer a {
+    text-decoration: none;
+}
+
+.home_footer p:hover {
+    color: rgb(114, 114, 114);
+    transition: transform 0.25s ease-in-out;
 }
 
 

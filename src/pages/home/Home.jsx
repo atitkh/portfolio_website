@@ -66,6 +66,11 @@ function Home() {
                         {(item.mainCategory).includes(currentCategory) ? <div><Gallery key={item.id} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
                     ))}
                 </div>
+                <div className="home_footer">
+                    <a href="https://kerkarcreations.com/" target="_blank" rel="noreferrer">
+                        <p>© 2022     Kerkar Creations</p>
+                    </a>
+                </div>
             </div>
         );
     }
