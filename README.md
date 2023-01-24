@@ -1,70 +1,46 @@
-# Getting Started with Create React App
+# PORTFOLIO WEBSITE
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a portfolio website developed in React that utilizes JSON data to populate the webpage. The website can be easily customized by cloning the repository and changing the API URL to display your own portfolio information.
 
-## Available Scripts
+## Getting Started
 
-In the project directory, you can run:
+1) Clone the repository to your local machine: git clone https://github.com/atitkh/portfolio_website.git
+2) Install the necessary dependencies: npm install
+3) Run the development server: npm start
+4) The website will be available at http://localhost:3000
 
-### `npm start`
+## Customizing the Website
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+To customize the website, you will need to edit the src/components/pages/home/Home.jsx file and change the API URL to point to a different JSON file with your own portfolio information. The json format should be as follows:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+{
+    "title": "John Doe",
+    "social_links" : {
+        "github": GITHUB_URL,
+        "linkedin": LINKEDIN_URL,
+        "website": WEBSITE_URL
+    },
+    "main_categories" : ["Category 1", "Category 2", "Category 3"],
+    "portfolio" : [
+        {
+            "id": 1,
+            "title": "Project 1",
+            "description": "Project 1 description",
+            "image" : IMAGE_URL,
+            "video" : VIDEO_URL,
+            "projectLink" : [ PROJECT_URL1, PROJECT_URL2 ],
+            "categories" : ["Category 1", "Category 2"], // Tools and languages used in project
+            "date" : "2019-01-01"
+            "mainCategory" : ["Category 1", "Category 2"] // Should be a subset of main_categories
+        },
+        ...
+    ]
+}
+```
 
-### `npm test`
+Additionally, you can edit the public/index.html file to change the headings and title images of the website.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Deployment
 
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+To deploy the website, you can run npm run build to create a production-ready build of the website. You can then host the build files on a web server of your choice.
