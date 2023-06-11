@@ -73,12 +73,12 @@ function GalleryModal({ key, opened, onClose, isMobile, image, title, date, desc
         <Modal
             opened={opened}
             onClose={onClose}
-            withCloseButton={false}
+            withCloseButton={isMobile}
             size="xl"
-            radius={isMobile ? 'sm' : 'lg'}
+            radius={isMobile ? 'xs' : 'lg'}
             scrollAreaComponent={ScrollArea.Autosize}
             centered
-            fullScreen={isMobile}
+            // fullScreen={isMobile}
             transitionProps={{ transition: 'fade', duration: 200 }}
             overlayProps={{
                 color: theme.colorScheme === 'dark' ? theme.colors.dark[9] : theme.colors.gray[7],
@@ -87,21 +87,28 @@ function GalleryModal({ key, opened, onClose, isMobile, image, title, date, desc
             }}
         >
             {/* close */}
-            <Group position='right'>
-                <ActionIcon onClick={onClose} radius='lg' size='xs'>
-                    <IconX />
-                </ActionIcon>
-            </Group>
+            { !isMobile &&
+                <Group position='right'>
+                    <ActionIcon onClick={onClose} radius='lg' size='xs'>
+                        <IconX />
+                    </ActionIcon>
+                </Group>
+            }
 
             <div style={{
                 display: 'flex',
                 flexDirection: isMobile ? 'column' : 'row',
                 justifyContent: 'center',
                 alignItems: isMobile ? 'center' : 'flex-start',
-                padding: '0 0.8rem 0.8rem 0.8rem',
+                padding: isMobile ? '0' : '0 0.8rem 0.8rem 0.8rem',
                 gap: '1rem',
             }}>
-                <div style={{ flex: 1, maxWidth: '340px', maxHeight: '570px', marginRight: '1rem' }}>
+                <div style={{
+                    flex: 1,
+                    maxWidth: '340px',
+                    maxHeight: '570px',
+                    marginRight: isMobile ? '0' : '1rem'
+                }}>
                     <Image
                         withPlaceholder
                         src={image}
