@@ -6,12 +6,12 @@ import axios from 'axios';
 import { GitHub, LinkedIn, Language } from "@mui/icons-material"
 
 function Home() {
-    
+
     const [mainTitle, setMainTitle] = useState('')
-    const [socialLinks, setSocialLinks] = useState([]) 
+    const [socialLinks, setSocialLinks] = useState([])
     const [categories, setCategories] = useState([])
     const [currentCategory, setCurrentCategory] = useState('All')
-    const [portfolioData, setPortfolio] = useState([]) 
+    const [portfolioData, setPortfolio] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -44,6 +44,10 @@ function Home() {
     }
     else {
         return (
+            // set page title
+            document.title = mainTitle + ' | Portfolio Website',
+
+            // main page
             <div className='home'>
                 <div className="home_head">
                     <div className="home_head_name">
@@ -57,18 +61,18 @@ function Home() {
                 </div>
                 <div className="home_categories">
                     {categories.map((item, index) => (
-                        <div><p onClick={() => setCurrentCategory(item) } className={currentCategory === item ? 'active' : 'inactive'}>{item}</p></div>
+                        <div><p onClick={() => setCurrentCategory(item)} className={currentCategory === item ? 'active' : 'inactive'}>{item}</p></div>
                     ))}
                 </div>
                 <div className='home_gallery'>
                     {portfolioData.map((item, index) => (
                         <>{currentCategory === "All" ? <div><Gallery key={item.id} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}
-                        {(item.mainCategory).includes(currentCategory) ? <div><Gallery key={item.id} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
+                            {(item.mainCategory).includes(currentCategory) ? <div><Gallery key={item.id} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
                     ))}
                 </div>
                 <div className="home_footer">
                     <a href="https://kerkarcreations.com/" target="_blank" rel="noreferrer">
-                        <p>© 2022     Kerkar Creations</p>
+                        <p>©  {new Date().getFullYear()}   Kerkar Creations</p>
                     </a>
                 </div>
             </div>
