@@ -1,3 +1,7 @@
+.mantine-Modal-inner {
+    padding-left: 0;
+}
+
 .gallery_item {
     display: flex;
     flex-direction: column;
