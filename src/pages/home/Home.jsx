@@ -1,11 +1,15 @@
-import { React, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './home.css';
 import './loader.css'
-import { Gallery } from '../../components';
+import { Gallery, GalleryModal } from '../../components';
 import axios from 'axios';
 import { GitHub, LinkedIn, Language } from "@mui/icons-material"
+import { Button, Tooltip } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 
 function Home() {
+    const [opened, { open, close }] = useDisclosure(false);
+    const [currentItem, setCurrentItem] = useState({});
 
     const [mainTitle, setMainTitle] = useState('')
     const [socialLinks, setSocialLinks] = useState([])
@@ -13,6 +17,16 @@ function Home() {
     const [currentCategory, setCurrentCategory] = useState('All')
     const [portfolioData, setPortfolio] = useState([])
     const [loading, setLoading] = useState(true)
+
+    const handleCloseModal = () => {
+        close();
+        setCurrentItem({});
+    };
+
+    const handleOpenModal = (item) => {
+        open();
+        setCurrentItem(item);
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -49,11 +63,34 @@ function Home() {
 
             // main page
             <div className='home'>
+                <GalleryModal
+                    item={currentItem}
+                    lensID={currentItem.lensID}
+                    opened={opened}
+                    onClose={handleCloseModal}
+
+                    image={currentItem.image}
+                    title={currentItem.title}
+                    date={currentItem.date}
+                    description={currentItem.description}
+                    categories={currentItem.categories}
+                    projectLink={currentItem.projectLink}
+                />
+
                 <div className="home_head">
                     <div className="home_head_name">
                         <h1>{mainTitle}</h1>
                     </div>
                     <div className="home_head_links">
+                        <Tooltip label="Coming Soon" withArrow>
+                            <Button
+                                variant="outline"
+                                style={{ marginRight: '1rem' }}
+                            // onClick={() => window.location.href = '/vr'}
+                            >
+                                TRY IN VR
+                            </Button>
+                        </Tooltip>
                         <a href={socialLinks.github} target="_blank" rel="noreferrer"><h1><GitHub fontSize='large' /></h1></a>
                         <a href={socialLinks.linkedin} target="_blank" rel="noreferrer"><h1><LinkedIn fontSize='large' /></h1></a>
                         <a href={socialLinks.website} target="_blank" rel="noreferrer"><h1><Language fontSize='large' /></h1></a>
@@ -66,8 +103,8 @@ function Home() {
                 </div>
                 <div className='home_gallery'>
                     {portfolioData.map((item, index) => (
-                        <>{currentCategory === "All" ? <div><Gallery key={item.id} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}
-                            {(item.mainCategory).includes(currentCategory) ? <div><Gallery key={item.id} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
+                        <>{currentCategory === "All" ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}
+                            {(item.mainCategory).includes(currentCategory) ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
                     ))}
                 </div>
                 <div className="home_footer">

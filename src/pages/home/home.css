@@ -72,7 +72,7 @@
     overscroll-behavior-inline: contain;
     width: 100%;
     height: auto;
-    z-index: 2;
+    z-index: 0.5;
 }
 
 .home_categories:before,:after {
