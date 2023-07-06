@@ -69,7 +69,7 @@ REACT_APP_LENS_GROUP_ID="your_lens_group_id"
 ```
 Replace "your_snap_api_token" with the Snap API token you obtained in step 1, and "your_lens_group_id" with your actual lens group ID.
 
-3) Integrate WebAR in Your Project: In your project's JSON data, add a new key called 'lensID'. Assign the value of this key as the lens ID you want to use for WebAR integration. For example:
+3) In your project's JSON data, add a new key called 'lensID'. For example:
 
 ```
 {
