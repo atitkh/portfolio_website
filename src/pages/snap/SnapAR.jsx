@@ -34,8 +34,6 @@ function SnapAR(props) {
       video: { deviceId },
     });
 
-    console.log(mediaStreamRef.current);
-
     let cameraType = 'front';
 
     // check if lens has cameraFacingPreference
@@ -151,7 +149,7 @@ function SnapAR(props) {
         setMainTitle(appliedLens.name);
       }
 
-      await setCameraKitSource(session, null, lens);
+      await setCameraKitSource(session, true, lens);
       await attachCamerasToSelect(session);
 
       // Set the lensInitialized flag to true

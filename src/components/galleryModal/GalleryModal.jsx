@@ -128,7 +128,7 @@ function GalleryModal({ key, item, lensID, opened, onClose, image, title, date, 
                             // <Button component="a" href={`/snapar/${lensID}`} target='_blank' variant="filled" size='md' radius={'md'} style={{ marginTop: '0.5rem' }} leftIcon={<IconExternalLink />}>
                             //     Try on Browser
                             // </Button>
-                            <Button onClick={() => { setStartAR(true); console.log(startAR) }} variant="filled" size='md' radius={'md'} style={{ marginTop: '0.5rem' }} leftIcon={<IconAugmentedReality />}>
+                            <Button onClick={() => { setStartAR(true); }} variant="filled" size='md' radius={'md'} style={{ marginTop: '0.5rem' }} leftIcon={<IconAugmentedReality />}>
                                 Try on Browser
                             </Button>
                         }
