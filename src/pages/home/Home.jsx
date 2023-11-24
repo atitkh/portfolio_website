@@ -6,8 +6,11 @@ import axios from 'axios';
 import { GitHub, LinkedIn, Language } from "@mui/icons-material"
 import { Button, Tooltip } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import { useParams } from 'react-router-dom';
 
 function Home() {
+    const { id } = useParams();
+
     const [opened, { open, close }] = useDisclosure(false);
     const [currentItem, setCurrentItem] = useState({});
 
@@ -35,6 +38,12 @@ function Home() {
             setSocialLinks(result.data.social_links);
             setCategories(result.data.main_categories);
             setPortfolio(result.data.portfolio);
+
+            if (id && result.data.portfolio) {
+                handleOpenModal(result.data.portfolio[id]);
+                console.warn(id);
+            }
+
             setLoading(false);
         }
         fetchData();

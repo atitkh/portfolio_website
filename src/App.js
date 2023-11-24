@@ -10,6 +10,7 @@ const App = () => {
       <MantineProvider theme={{ primaryColor: 'dark' }}>
         <Routes>
           <Route exact path="/" element={<Home />} />
+          <Route exact path="/view/:id" element={<Home />} />
           <Route exact path="/vr" element={<Vr />} />
           <Route exact path="/snapar/:lensID" element={<SnapAR />} />
           <Route path="*" element={<NoPage />} />
