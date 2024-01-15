@@ -58,7 +58,7 @@ function SnapAR(props) {
     setSource(source);
 
     // export session to parent
-    props.handleSessionExport(session, mediaStreamRef.current);
+    props.handleSessionExport ? props.handleSessionExport(session, mediaStreamRef.current) : console.log('no handleSessionExport');
 
     // start lens
     session.play();
