@@ -132,6 +132,52 @@ function SnapAR(props) {
 
       // Replace the canvas element with the live output of the session
       document.getElementById('canvas').replaceWith(session.output.live);
+      // let canvas = session.output.live;
+      // console.warn('canvas', canvas);
+
+
+      // const startRecordingBtn = document.getElementById('startRecording');
+      // const stopRecordingBtn = document.getElementById('stopRecording');
+      // const downloadRecordingBtn = document.getElementById('downloadRecording');
+
+      // let mediaRecorder;
+      // let recordedChunks = [];
+
+      // const canvasStream = canvas.captureStream();
+      // startRecordingBtn.addEventListener('click', () => {
+      //   mediaRecorder = new MediaRecorder(canvasStream);
+
+      //   mediaRecorder.ondataavailable = (event) => {
+      //     if (event.data.size > 0) {
+      //       recordedChunks.push(event.data);
+      //     }
+      //   };
+
+      //   mediaRecorder.onstop = () => {
+      //     const videoBlob = new Blob(recordedChunks, { type: 'video/mp4' });
+      //     const url = URL.createObjectURL(videoBlob);
+      //     recordedChunks = [];
+
+      //     downloadRecordingBtn.href = url;
+      //     downloadRecordingBtn.download = 'recorded-video.mp4';
+      //     downloadRecordingBtn.disabled = false;
+
+      //     const video = document.createElement('video');
+      //     video.src = url;
+      //     video.controls = true;
+      //     document.body.appendChild(video);
+      //   };
+
+      //   mediaRecorder.start();
+      //   startRecordingBtn.disabled = true;
+      //   stopRecordingBtn.disabled = false;
+      // });
+
+      // stopRecordingBtn.addEventListener('click', () => {
+      //   mediaRecorder.stop();
+      //   startRecordingBtn.disabled = false;
+      //   stopRecordingBtn.disabled = true;
+      // });
 
       // Create a new user media source and set it as the session source
       // const userMediaSource = await createUserMediaSource();
@@ -211,6 +257,9 @@ function SnapAR(props) {
               {lensStarted ? 'Pause' : 'Play'}
             </Button> */}
           </div>
+          <button id="startRecording">Start Recording</button>
+          <button id="stopRecording" disabled>Stop Recording</button>
+          <button id="downloadRecording" disabled>Download Recording</button>
         </Group>
       </div>
     </>

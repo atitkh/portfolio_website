@@ -18,6 +18,12 @@
 .env.test.local
 .env.production.local
 
+# under development
+/src/components/vr
+/src/ui
+/src/utils
+/public/textures
+
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
