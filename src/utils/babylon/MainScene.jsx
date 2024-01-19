@@ -4,7 +4,6 @@ import "@babylonjs/loaders";
 import { CharacterController } from "babylonjs-charactercontroller";
 import { Inspector } from "@babylonjs/inspector";
 import axios from "axios";
-import "./mainScene.css";
 import { joystickController } from "./joystickController";
 
 class MainScene extends Component {
@@ -34,12 +33,12 @@ class MainScene extends Component {
         await this.createEnvironment();
         this.HUD = new joystickController(this.scene, this.canvasRef.current, this.engine);
         if (this.HUD._playerUI) this.createHUD();
-        
+
         window.addEventListener("resize", () => {
             this.engine.resize();
         });
 
-        document.getElementById("loadingScreen").style.display = "none";
+        this.props.setLoading(false);
     }
 
     componentWillUnmount() {
@@ -430,20 +429,6 @@ class MainScene extends Component {
         return (
             document.title = 'Portfolio Website | XR',
             <>
-                <div id="loadingScreen">
-                    <div className="loader-container">
-                        <div className="wrapper">
-                            <span className="circle circle-1"></span>
-                            <span className="circle circle-2"></span>
-                            <span className="circle circle-3"></span>
-                            <span className="circle circle-4"></span>
-                            <span className="circle circle-5"></span>
-                            <span className="circle circle-6"></span>
-                            <span className="circle circle-7"></span>
-                            <span className="circle circle-8"></span>
-                        </div>
-                    </div>
-                </div>
                 <canvas ref={this.canvasRef}
                     id="renderCanvas"
                     style={{ width: '100vw', height: '100vh', display: 'block' }} />
