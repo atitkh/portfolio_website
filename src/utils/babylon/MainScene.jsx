@@ -34,6 +34,10 @@ class MainScene extends Component {
         await this.createEnvironment();
         this.HUD = new joystickController(this.scene, this.canvasRef.current, this.engine);
         if (this.HUD._playerUI) this.createHUD();
+        
+        window.addEventListener("resize", () => {
+            this.engine.resize();
+        });
 
         document.getElementById("loadingScreen").style.display = "none";
     }

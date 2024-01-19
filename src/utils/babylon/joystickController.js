@@ -4,9 +4,7 @@ import {
     Button,
     Control,
     Ellipse,
-    GUI3DManager,
-    HolographicButton,
-    Rectangle
+    GUI3DManager
 } from '@babylonjs/gui';
 import {
     TransformNode
@@ -146,9 +144,6 @@ export class joystickController {
         }
 
         if (this.isMobile) {
-            let sat = getComputedStyle(document.documentElement).getPropertyValue("--sat")
-            let sab = getComputedStyle(document.documentElement).getPropertyValue("--sab")
-
             if (w > h) {
                 this.LsideJoystickOffset = w * 0.15;
                 this.LbottomJoystickOffset = h * 0.15;
