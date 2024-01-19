@@ -41,7 +41,7 @@ function Home() {
 
             if (id && result.data.portfolio) {
                 handleOpenModal(result.data.portfolio[id]);
-                console.warn(id);
+                // console.warn(id);
             }
 
             setLoading(false);

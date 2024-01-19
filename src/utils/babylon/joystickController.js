@@ -60,7 +60,7 @@ export class joystickController {
         this.limitUpDown = false;
 
         if (this.isMobile) {
-            console.log('HUD] creating mobile UI');
+            // console.log('HUD] creating mobile UI');
             this._createMobileHud();
         }
         // end Summerf
@@ -166,7 +166,7 @@ export class joystickController {
             this.rightJoystickTouchArea.left = -this.RsideJoystickOffset;
             this.rightJoystickTouchArea.top = -this.RbottomJoystickOffset;
 
-            console.log('[HUD]', sat, sab, this.deviceInfo, this.LbottomJoystickOffset, this.leftJoystickTouchArea.top, this.RbottomJoystickOffset, this.rightJoystickTouchArea.top);
+            // console.log('[HUD]', sat, sab, this.deviceInfo, this.LbottomJoystickOffset, this.leftJoystickTouchArea.top, this.RbottomJoystickOffset, this.rightJoystickTouchArea.top);
         }
 
 
@@ -175,7 +175,7 @@ export class joystickController {
 
     // UI
     _createMobileHud() {
-        console.log('[HUD] create mobile HUD controls');
+        // console.log('[HUD] create mobile HUD controls');
         this._playerUI = AdvancedDynamicTexture.CreateFullscreenUI("UI");
 
         // joystick left, jump point right

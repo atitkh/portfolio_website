@@ -410,7 +410,7 @@ class MainScene extends Component {
         let l = ars.length;
         for (let i = 0; i < l; i++) {
             let ar = ars[i];
-            console.log(ar.name + "," + ar.from + "," + ar.to);
+            // console.log(ar.name + "," + ar.from + "," + ar.to);
             skel.deleteAnimationRange(ar.name, false);
         }
     }
