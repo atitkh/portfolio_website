@@ -1,8 +1,14 @@
 import React from "react";
-import ReactDom from "react-dom";
+import ReactDom from "react-dom/client";
 import { SkeletonTheme } from 'react-loading-skeleton'
 
 import App from "./App";
 import "./index.css";
 
-ReactDom.render(<SkeletonTheme><App /></SkeletonTheme>, document.getElementById("root"));
+const rootElement = document.getElementById("root");
+
+ReactDom.createRoot(rootElement).render(
+    <SkeletonTheme>
+        <App />
+    </SkeletonTheme>
+);

@@ -1,0 +1,1 @@
+export { default as MainScene } from "./babylon/MainScene";
