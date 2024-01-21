@@ -11,11 +11,15 @@ class MainScene extends Component {
         super(props);
         this.mainTitle = null;
         this.canvasRef = React.createRef();
+
         this.engine = null;
         this.scene = null;
-        this.camera = null;
-        this.player = null;
+        this.mainCamera = null;
         this.characterController = null;
+
+        // model/meshes
+        this.sceneModelMeshes = null;
+        this.player = null;
 
         this.spotLight = null;
         this.spotLightPos = new BABYLON.Vector3(3.85, 4.05, -0.40);
@@ -26,11 +30,13 @@ class MainScene extends Component {
 
     async componentDidMount() {
         this.engine = new BABYLON.Engine(this.canvasRef.current, true);
-
         this.scene = this.createScene();
 
+        await this.loadModels();
+
+        await this.setupEnvironment();
         this.createCharacterController();
-        await this.createEnvironment();
+
         this.HUD = new joystickController(this.scene, this.canvasRef.current, this.engine);
         if (this.HUD._playerUI) this.createHUD();
 
@@ -38,7 +44,9 @@ class MainScene extends Component {
             this.engine.resize();
         });
 
-        this.props.setLoading(false);
+        this.scene.executeWhenReady(() => {
+            this.props.setLoading(false);
+        });
     }
 
     componentWillUnmount() {
@@ -49,16 +57,6 @@ class MainScene extends Component {
     createScene() {
         const scene = new BABYLON.Scene(this.engine);
         new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 10, 0), scene);
-
-        // this.spotLight = new BABYLON.SpotLight(
-        //   "spotLight",
-        //   new BABYLON.Vector3(3.85, 4.05, -0.40),
-        //   new BABYLON.Vector3(-0.6, -0.75, 0.1),
-        //   Math.PI / 3,
-        //   2,
-        //   scene
-        // );
-        // this.spotLight.intensity = 200;
 
         // scene.onPointerDown = (evt) => {
         //     if (evt.button === 0) this.engine.enterPointerlock();
@@ -75,15 +73,21 @@ class MainScene extends Component {
         return scene;
     }
 
-    async createEnvironment() {
-        const { meshes } = await BABYLON.SceneLoader.ImportMeshAsync(
-            "",
-            "./models/",
-            "vrModernGallery.gltf",
-            this.scene
-        );
+    async loadModels() {
+        BABYLON.SceneLoader.ShowLoadingScreen = false;
 
-        meshes.forEach((mesh) => {
+        // load room model
+        const { meshes: roomMeshes } = await BABYLON.SceneLoader.AppendAsync("./models/vrModernGallery.gltf", "", this.scene);
+        this.sceneModelMeshes = roomMeshes;
+
+        // load player model
+        const { meshes: playerMeshes, skeletons: playerSkeletons } = await BABYLON.SceneLoader.ImportMeshAsync("", "./player/", "Vincent-backFacing.babylon", this.scene);
+        this.player = playerMeshes[0];
+        this.player.skeleton = playerSkeletons[0];
+    }
+
+    async setupEnvironment() {
+        this.sceneModelMeshes.forEach((mesh) => {
             // if (mesh.name === "Room") {
             mesh.checkCollisions = true;
             mesh.collisionRetryCount = 4;
@@ -127,7 +131,7 @@ class MainScene extends Component {
                     spotLight.parent = mesh.parent;
                     spotLight.position = this.spotLightPos;
                     spotLight.intensity = 200;
-                    spotLight.includedOnlyMeshes = [mesh, meshes[0]];
+                    spotLight.includedOnlyMeshes = [mesh, this.sceneModelMeshes[0]];
                 }
             });
         }
@@ -283,113 +287,107 @@ class MainScene extends Component {
     }
 
     createCharacterController() {
-        BABYLON.SceneLoader.ImportMesh("", "./player/", "Vincent-backFacing.babylon", this.scene, (meshes, particleSystems, skeletons, animationGroups) => {
-            try {
-                this.player = meshes[0];
-                var skeleton = skeletons[0];
-                this.player.skeleton = skeleton;
+        try {
+            this.player.skeleton.enableBlending(0.1);
+            this.player.scaling.scaleInPlace(2);
+            //if the skeleton does not have any animation ranges then set them as below
+            // this.setAnimationRanges(skeleton);
 
-                skeleton.enableBlending(0.1);
-                this.player.scaling.scaleInPlace(2);
-                //if the skeleton does not have any animation ranges then set them as below
-                // this.setAnimationRanges(skeleton);
+            // var sm = this.player.material;
+            // if (sm.diffuseTexture != null) {
+            //     sm.backFaceCulling = true;
+            //     sm.ambientColor = new BABYLON.Color3(1, 1, 1);
+            // }
 
-                // var sm = this.player.material;
-                // if (sm.diffuseTexture != null) {
-                //     sm.backFaceCulling = true;
-                //     sm.ambientColor = new BABYLON.Color3(1, 1, 1);
-                // }
+            this.player.position = new BABYLON.Vector3(0, 10, 0);
+            this.player.checkCollisions = true;
+            this.player.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
+            this.player.ellipsoidOffset = new BABYLON.Vector3(0, 1, 0);
 
-                this.player.position = new BABYLON.Vector3(0, 10, 0);
-                this.player.checkCollisions = true;
-                this.player.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
-                this.player.ellipsoidOffset = new BABYLON.Vector3(0, 1, 0);
+            //rotate the camera behind the player
+            this.player.rotation.y = Math.PI / 2;
+            // var alpha = (Math.PI / 2 - this.player.rotation.y);
+            var alpha = 0;
+            var beta = Math.PI / 2;
+            var target = new BABYLON.Vector3(this.player.position.x, this.player.position.y + 3.5, this.player.position.z);
 
-                //rotate the camera behind the player
-                this.player.rotation.y = Math.PI / 2;
-                // var alpha = (Math.PI / 2 - this.player.rotation.y);
-                var alpha = 0;
-                var beta = Math.PI / 2.5;
-                var target = new BABYLON.Vector3(this.player.position.x, this.player.position.y + 3.5, this.player.position.z);
+            this.mainCamera = new BABYLON.ArcRotateCamera("ArcRotateCamera", alpha, beta, 5, target, this.scene);
+            //standard camera setting
+            this.mainCamera.wheelPrecision = 15;
+            this.mainCamera.checkCollisions = true;
+            //make sure the keyboard keys controlling camera are different from those controlling player
+            //here we will not use any keyboard keys to control camera
+            this.mainCamera.keysLeft = [];
+            this.mainCamera.keysRight = [];
+            this.mainCamera.keysUp = [];
+            this.mainCamera.keysDown = [];
+            //how close can the camera come to player
+            this.mainCamera.lowerRadiusLimit = 2;
+            //how far can the camera go from the player
+            this.mainCamera.upperRadiusLimit = 10;
 
-                this.camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", alpha, beta, 5, target, this.scene);
-                //standard camera setting
-                this.camera.wheelPrecision = 15;
-                this.camera.checkCollisions = true;
-                //make sure the keyboard keys controlling camera are different from those controlling player
-                //here we will not use any keyboard keys to control camera
-                this.camera.keysLeft = [];
-                this.camera.keysRight = [];
-                this.camera.keysUp = [];
-                this.camera.keysDown = [];
-                //how close can the camera come to player
-                this.camera.lowerRadiusLimit = 2;
-                //how far can the camera go from the player
-                this.camera.upperRadiusLimit = 10;
+            this.mainCamera.attachControl();
 
-                this.camera.attachControl();
+            this.characterController = new CharacterController(this.player, this.mainCamera, this.scene);
+            this.characterController.setFaceForward(false);
+            this.characterController.setMode(0);
+            this.characterController.setTurnSpeed(45);
+            this.characterController.setTurningOff(true);
+            //below makes the controller point the camera at the player head which is approximately where the eyes are
+            this.characterController.setCameraTarget(new BABYLON.Vector3(0, 3.5, 0));
 
-                this.characterController = new CharacterController(this.player, this.camera, this.scene);
-                this.characterController.setFaceForward(false);
-                this.characterController.setMode(0);
-                this.characterController.setTurnSpeed(45);
-                this.characterController.setTurningOff(true);
-                //below makes the controller point the camera at the player head which is approximately where the eyes are
-                this.characterController.setCameraTarget(new BABYLON.Vector3(0, 3.5, 0));
+            //if the camera comes close to the player we want to enter first person mode.
+            this.characterController.setNoFirstPerson(true);
+            //the height of steps which the player can climb
+            this.characterController.setStepOffset(0.4);
+            //the minimum and maximum slope the player can go up
+            //between the two the player will start sliding down if it stops
+            this.characterController.setSlopeLimit(30, 60);
 
-                //if the camera comes close to the player we want to enter first person mode.
-                this.characterController.setNoFirstPerson(true);
-                //the height of steps which the player can climb
-                this.characterController.setStepOffset(0.4);
-                //the minimum and maximum slope the player can go up
-                //between the two the player will start sliding down if it stops
-                this.characterController.setSlopeLimit(30, 60);
+            // set
+            // - which animation range should be used for which player animation
+            // - rate at which to play that animation range
+            // - wether the animation range should be looped
+            // use this if name, rate or looping is different from default
+            this.characterController.setIdleAnim("idle", 1, true);
+            this.characterController.setTurnLeftAnim("turnLeft", 0.5, true);
+            this.characterController.setTurnRightAnim("turnRight", 0.5, true);
+            this.characterController.setWalkBackAnim("walkBack", 0.5, true);
+            this.characterController.setIdleJumpAnim("idleJump", 0.5, false);
+            this.characterController.setRunJumpAnim("runJump", 0.6, false);
+            this.characterController.setFallAnim("fall", 2, false);
+            this.characterController.setSlideBackAnim("slideBack", 1, false);
 
-                // set
-                // - which animation range should be used for which player animation
-                // - rate at which to play that animation range
-                // - wether the animation range should be looped
-                // use this if name, rate or looping is different from default
-                this.characterController.setIdleAnim("idle", 1, true);
-                this.characterController.setTurnLeftAnim("turnLeft", 0.5, true);
-                this.characterController.setTurnRightAnim("turnRight", 0.5, true);
-                this.characterController.setWalkBackAnim("walkBack", 0.5, true);
-                this.characterController.setIdleJumpAnim("idleJump", 0.5, false);
-                this.characterController.setRunJumpAnim("runJump", 0.6, false);
-                this.characterController.setFallAnim("fall", 2, false);
-                this.characterController.setSlideBackAnim("slideBack", 1, false);
+            // let walkSound = new BABYLON.Sound(
+            //     "walk",
+            //     "./sounds/footstep_carpet_000.ogg",
+            //     this.scene,
+            //     () => {
+            //         this.characterController.setSound(walkSound);
+            //     },
+            //     { loop: false }
+            // );
 
-                // let walkSound = new BABYLON.Sound(
-                //     "walk",
-                //     "./sounds/footstep_carpet_000.ogg",
-                //     this.scene,
-                //     () => {
-                //         this.characterController.setSound(walkSound);
-                //     },
-                //     { loop: false }
-                // );
-
-                var ua = window.navigator.userAgent;
-                var isIE = /MSIE|Trident/.test(ua);
-                if (isIE) {
-                    //IE specific code goes here
-                    this.characterController.setJumpKey("spacebar");
-                }
-
-                this.characterController.setCameraElasticity(true);
-                // this.characterController.makeObstructionInvisible(true);
-                this.characterController.start();
-
-                this.engine.runRenderLoop(() => {
-                    this.scene.render();
-                });
-
-                this.canvasRef.current.focus();
+            var ua = window.navigator.userAgent;
+            var isIE = /MSIE|Trident/.test(ua);
+            if (isIE) {
+                //IE specific code goes here
+                this.characterController.setJumpKey("spacebar");
             }
-            catch (err) {
-                console.log(err);
-            }
-        });
+
+            this.characterController.setCameraElasticity(true);
+            // this.characterController.makeObstructionInvisible(true);
+            this.characterController.start();
+
+            this.engine.runRenderLoop(() => {
+                this.scene.render();
+            });
+
+            this.canvasRef.current.focus();
+        }
+        catch (err) {
+            console.log(err);
+        }
     }
 
     setAnimationRanges(skel) {
