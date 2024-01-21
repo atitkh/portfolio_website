@@ -68,9 +68,9 @@ class MainScene extends Component {
             this.engine.resize();
         });
 
-        this.scene.executeWhenReady(() => {
+        Promise.all(this.promiseArray).then(() => {
             this.loadingProgress("scene", 100);
-            Promise.all(this.promiseArray).then(() => {
+            this.scene.executeWhenReady(() => {
                 setTimeout(() => {
                     this.props.setLoading(false);
                 }, 1000);
@@ -149,9 +149,12 @@ class MainScene extends Component {
         });
 
         // get portfolio data
+        let portfolioProgress = 0;
+        this.loadingProgress("portfolioData", portfolioProgress);
         const portfolioData = await this.getPortfolioData();
         if (portfolioData) {
             portfolioData.forEach((item, index) => {
+                let progressUpdated = false;
                 const paddedIndex = index.toString().padStart(3, "0");
                 const meshName = `Frame.${paddedIndex}`;
                 const mesh = this.scene.getMeshByName(meshName);
@@ -186,6 +189,16 @@ class MainScene extends Component {
                     spotLight.position = this.spotLightPos;
                     spotLight.intensity = 200;
                     spotLight.includedOnlyMeshes = [mesh, this.sceneModelMeshes[0]];
+
+                    portfolioProgress = (index * 100 / portfolioData.length).toFixed();
+                    this.loadingProgress("portfolioData", portfolioProgress);
+                    progressUpdated = true;
+                }
+
+                if (!progressUpdated) {
+                    portfolioProgress = (index * 100 / portfolioData.length).toFixed();
+                    this.loadingProgress("portfolioData", portfolioProgress);
+                    progressUpdated = true;
                 }
             });
         }
@@ -468,12 +481,12 @@ class MainScene extends Component {
     async getPortfolioData() {
         const result = await axios.get('https://api.atitkharel.com.np/portfolio/atit/')
         this.mainTitle = result.data.title;
+        this.props.setPageTitle(this.mainTitle);
         return (result.data.portfolio);
     }
 
     render() {
         return (
-            document.title = 'Portfolio Website | XR',
             <>
                 <canvas ref={this.canvasRef}
                     id="renderCanvas"
