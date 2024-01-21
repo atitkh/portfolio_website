@@ -20,6 +20,9 @@ class MainScene extends Component {
         // model/meshes
         this.sceneModelMeshes = null;
         this.player = null;
+        this.loadingPercent = 0;
+        this.progressMap = {};
+        this.promiseArray = [];
 
         this.spotLight = null;
         this.spotLightPos = new BABYLON.Vector3(3.85, 4.05, -0.40);
@@ -28,7 +31,19 @@ class MainScene extends Component {
         this.HUD = null;
     }
 
+    loadingProgress(name, progress) {
+        this.progressMap[name] = +progress;
+        // calc precentage
+        const sum = Object.keys(this.progressMap).reduce((prev, curr) => {
+            return prev + this.progressMap[curr];
+        }, 0);
+        this.loadingPercent = Math.round(sum / Object.keys(this.progressMap).length);
+        this.props.setLoadingPercent(this.loadingPercent);
+        // console.log(`loading ${name}: ${progress}%`);
+    }
+
     async componentDidMount() {
+        this.loadingProgress("scene", 0);
         this.engine = new BABYLON.Engine(this.canvasRef.current, true);
         this.scene = this.createScene();
 
@@ -40,12 +55,26 @@ class MainScene extends Component {
         this.HUD = new joystickController(this.scene, this.canvasRef.current, this.engine);
         if (this.HUD._playerUI) this.createHUD();
 
+        this.engine.runRenderLoop(() => {
+            if (this.scene) {
+                this.scene.render();
+                this.loadingProgress("scene", 95);
+            }
+        });
+
+        this.canvasRef.current.focus();
+
         window.addEventListener("resize", () => {
             this.engine.resize();
         });
 
         this.scene.executeWhenReady(() => {
-            this.props.setLoading(false);
+            this.loadingProgress("scene", 100);
+            Promise.all(this.promiseArray).then(() => {
+                setTimeout(() => {
+                    this.props.setLoading(false);
+                }, 1000);
+            });
         });
     }
 
@@ -77,13 +106,38 @@ class MainScene extends Component {
         BABYLON.SceneLoader.ShowLoadingScreen = false;
 
         // load room model
-        const { meshes: roomMeshes } = await BABYLON.SceneLoader.AppendAsync("./models/vrModernGallery.gltf", "", this.scene);
-        this.sceneModelMeshes = roomMeshes;
+        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./models/", "vrModernGallery.gltf", this.scene, (evt) => {
+            // onProgress
+            var loadedPercent = 0;
+            if (evt.lengthComputable) {
+                loadedPercent = (evt.loaded * 100 / evt.total).toFixed();
+            } else {
+                // var dlCount = evt.loaded / (1024 * 1024);
+                // loadedPercent = Math.floor(dlCount * 100.0) / 100.0;
+                // custom value for now
+                var dlCount = evt.loaded / 8679524;
+                loadedPercent = Math.floor(dlCount * 100.0);
+            }
+            this.loadingProgress("roomMeshes", loadedPercent);
+        }).then((result) => {
+            this.sceneModelMeshes = result.meshes;
+        }));
 
         // load player model
-        const { meshes: playerMeshes, skeletons: playerSkeletons } = await BABYLON.SceneLoader.ImportMeshAsync("", "./player/", "Vincent-backFacing.babylon", this.scene);
-        this.player = playerMeshes[0];
-        this.player.skeleton = playerSkeletons[0];
+        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./player/", "Vincent-backFacing.babylon", this.scene, (evt) => {
+            // onProgress
+            var loadedPercent = 0;
+            if (evt.lengthComputable) {
+                loadedPercent = (evt.loaded * 100 / evt.total).toFixed();
+            } else {
+                var dlCount = evt.loaded / (1024 * 1024);
+                loadedPercent = Math.floor(dlCount * 100.0) / 100.0;
+            }
+            this.loadingProgress("playerModel", loadedPercent);
+        }).then((result) => {
+            this.player = result.meshes[0]
+            this.player.skeleton = result.skeletons[0];
+        }));
     }
 
     async setupEnvironment() {
@@ -378,12 +432,6 @@ class MainScene extends Component {
             this.characterController.setCameraElasticity(true);
             // this.characterController.makeObstructionInvisible(true);
             this.characterController.start();
-
-            this.engine.runRenderLoop(() => {
-                this.scene.render();
-            });
-
-            this.canvasRef.current.focus();
         }
         catch (err) {
             console.log(err);

@@ -33,6 +33,14 @@
     position: relative;
 }
 
+.loadingPercent {
+    display: block;
+    color: #ffffff;
+    font-size: 20px;
+    font-weight: 600;
+    margin-top: 80px;
+}
+
 @keyframes loading {
     0% {
         transform: translateY(0px);

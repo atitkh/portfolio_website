@@ -6,6 +6,7 @@ import { useDisclosure } from '@mantine/hooks';
 
 function VRB() {
     const [loading, setLoading] = useState(true);
+    const [loadingPercent, setLoadingPercent] = useState(0);
     const [opened, { open, close }] = useDisclosure(false);
     const [currentItem, setCurrentItem] = useState({});
 
@@ -23,8 +24,8 @@ function VRB() {
         if (!loading) {
             document.getElementsByClassName('loader-container')[0].style.display = 'none';
             document.getElementsByClassName('overlay')[0].style.display = 'none';
+            console.warn('Loading complete');
         }
-        console.warn('stopped loading')
     }, [loading]);
 
     return (
@@ -40,6 +41,7 @@ function VRB() {
                         <span className="circle circle-6"></span>
                         <span className="circle circle-7"></span>
                         <span className="circle circle-8"></span>
+                        <div className="loadingPercent">LOADING : {loadingPercent}%</div>
                     </div>
                 </div>
 
@@ -58,7 +60,7 @@ function VRB() {
                 />
             </div>
 
-            <MainScene setLoading={setLoading} handleOpenGModal={handleOpenGModal} />
+            <MainScene setLoading={setLoading} setLoadingPercent={setLoadingPercent} handleOpenGModal={handleOpenGModal} />
         </>
     );
 }
