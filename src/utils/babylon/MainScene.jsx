@@ -28,7 +28,7 @@ class MainScene extends Component {
         this.spotLightPos = new BABYLON.Vector3(3.85, 4.05, -0.40);
 
         //joy stick
-        this.HUD = null;
+        this.UI = null;
     }
 
     loadingProgress(name, progress) {
@@ -43,22 +43,24 @@ class MainScene extends Component {
     }
 
     async componentDidMount() {
-        this.loadingProgress("scene", 0);
         this.engine = new BABYLON.Engine(this.canvasRef.current, true);
         this.scene = this.createScene();
 
+        //initialize loader and models
+        this.loadingProgress("roomMeshes", 0);
+        this.loadingProgress("playerModel", 0);
+        this.loadingProgress("portfolioData", 0);
         await this.loadModels();
 
         await this.setupEnvironment();
         this.createCharacterController();
 
-        this.HUD = new joystickController(this.scene, this.canvasRef.current, this.engine);
-        if (this.HUD._playerUI) this.createHUD();
+        this.UI = new joystickController(this.scene, this.canvasRef.current, this.engine);
+        if (this.UI.playerUI) this.createUI();
 
         this.engine.runRenderLoop(() => {
             if (this.scene) {
                 this.scene.render();
-                this.loadingProgress("scene", 95);
             }
         });
 
@@ -69,7 +71,6 @@ class MainScene extends Component {
         });
 
         Promise.all(this.promiseArray).then(() => {
-            this.loadingProgress("scene", 100);
             this.scene.executeWhenReady(() => {
                 setTimeout(() => {
                     this.props.setLoading(false);
@@ -141,27 +142,55 @@ class MainScene extends Component {
     }
 
     async setupEnvironment() {
+        var totalLoadablePortfolio = 0;
+        var totalLoadedPortfolio = 0;
+        let portfolioProgress = 0;
+
         this.sceneModelMeshes.forEach((mesh) => {
-            // if (mesh.name === "Room") {
             mesh.checkCollisions = true;
             mesh.collisionRetryCount = 4;
-            // }
+
+            if (mesh.name.startsWith("Frame")) {
+                // mesh.actionManager = new BABYLON.ActionManager(this.scene);
+                // mesh.actionManager.registerAction(
+                //     new BABYLON.ExecuteCodeAction(
+                //         BABYLON.ActionManager.OnPickTrigger,
+                //         (evt) => {
+                //             this.props.handleOpenGModal(evt.source);
+                //         }
+                //     )
+                // );
+                totalLoadablePortfolio++;
+            }
         });
 
+        // console.warn(`Total loadable portfolio: ${totalLoadablePortfolio}`);
+
         // get portfolio data
-        let portfolioProgress = 0;
-        this.loadingProgress("portfolioData", portfolioProgress);
         const portfolioData = await this.getPortfolioData();
         if (portfolioData) {
             portfolioData.forEach((item, index) => {
-                let progressUpdated = false;
                 const paddedIndex = index.toString().padStart(3, "0");
                 const meshName = `Frame.${paddedIndex}`;
                 const mesh = this.scene.getMeshByName(meshName);
                 if (mesh) {
+                    // totalLoadedPortfolio++;
                     const texture = new BABYLON.Texture(
                         item.image,
-                        this.scene
+                        this.scene,
+                        '',
+                        true,
+                        '',
+                        () => {
+                            totalLoadedPortfolio++;
+                            portfolioProgress = (totalLoadedPortfolio * 100 / totalLoadablePortfolio).toFixed();
+                            // console.log(`Loading texture for ${item.title}: ${portfolioProgress}%`);
+                            this.loadingProgress("portfolioData", portfolioProgress);
+                        },
+                        () => {
+                            // onError
+                            console.log(`Error loading texture for ${item.title}`);
+                        }
                     );
 
                     const material = new BABYLON.PBRMaterial(
@@ -189,63 +218,53 @@ class MainScene extends Component {
                     spotLight.position = this.spotLightPos;
                     spotLight.intensity = 200;
                     spotLight.includedOnlyMeshes = [mesh, this.sceneModelMeshes[0]];
-
-                    portfolioProgress = (index * 100 / portfolioData.length).toFixed();
-                    this.loadingProgress("portfolioData", portfolioProgress);
-                    progressUpdated = true;
-                }
-
-                if (!progressUpdated) {
-                    portfolioProgress = (index * 100 / portfolioData.length).toFixed();
-                    this.loadingProgress("portfolioData", portfolioProgress);
-                    progressUpdated = true;
                 }
             });
         }
     }
 
-    createHUD() {
+    createUI() {
         let isLeftJoystickActive = false;
 
         // for left joystick
-        this.HUD.leftJoystickTouchArea.onPointerDownObservable.add((coordinates) => {
+        this.UI.leftJoystickTouchArea.onPointerDownObservable.add((coordinates) => {
             isLeftJoystickActive = true;
-            this.HUD.joystickStartX = (coordinates.x - this.HUD.leftJoystickTouchArea._currentMeasure.width * 0.5) - this.HUD.LsideJoystickOffset;
-            this.HUD.joystickStartY = (this.HUD._playerUI.getBaseSize().height - coordinates.y - this.HUD.leftJoystickTouchArea._currentMeasure.height * 0.5) - this.HUD.LbottomJoystickOffset;
-            this.HUD.leftPuck.floatLeft = this.HUD.joystickStartX;
-            this.HUD.leftPuck.floatTop = this.HUD.joystickStartY * -1;
-            this.HUD.leftPuck.left = this.HUD.leftPuck.floatLeft;
-            this.HUD.leftPuck.top = this.HUD.leftPuck.floatTop;
-            this.HUD.leftJoystickTouchArea.alpha = 1;
+            this.UI.joystickStartX = (coordinates.x - this.UI.leftJoystickTouchArea._currentMeasure.width * 0.5) - this.UI.LsideJoystickOffset;
+            this.UI.joystickStartY = (this.UI.playerUI.getBaseSize().height - coordinates.y - this.UI.leftJoystickTouchArea._currentMeasure.height * 0.5) - this.UI.LbottomJoystickOffset;
+            this.UI.leftPuck.floatLeft = this.UI.joystickStartX;
+            this.UI.leftPuck.floatTop = this.UI.joystickStartY * -1;
+            this.UI.leftPuck.left = this.UI.leftPuck.floatLeft;
+            this.UI.leftPuck.top = this.UI.leftPuck.floatTop;
+            this.UI.leftJoystickTouchArea.alpha = 1;
         });
 
-        this.HUD.leftJoystickTouchArea.onPointerUpObservable.add((coordinates) => {
+        this.UI.leftJoystickTouchArea.onPointerUpObservable.add((coordinates) => {
             isLeftJoystickActive = false;
-            this.HUD.joystickStartX = 0;
-            this.HUD.joystickStartY = 0;
-            this.HUD.leftPuck.left = 0;
-            this.HUD.leftPuck.top = 0;
-            this.HUD.leftJoystickTouchArea.alpha = 0.4;
+            this.UI.joystickStartX = 0;
+            this.UI.joystickStartY = 0;
+            this.UI.leftPuck.left = 0;
+            this.UI.leftPuck.top = 0;
+            this.UI.leftJoystickTouchArea.alpha = 0.4;
         });
 
-        this.HUD.leftJoystickTouchArea.onPointerMoveObservable.add((coordinates) => {
+        this.UI.leftJoystickTouchArea.onPointerMoveObservable.add((coordinates) => {
             if (isLeftJoystickActive) {
-                this.HUD.joystickStartX = (coordinates.x - this.HUD.leftJoystickTouchArea._currentMeasure.width * 0.5) - this.HUD.LsideJoystickOffset;
-                this.HUD.joystickStartY = (this.HUD._playerUI.getBaseSize().height - coordinates.y - this.HUD.leftJoystickTouchArea._currentMeasure.height * 0.5) - this.HUD.LbottomJoystickOffset;
-                this.HUD.leftPuck.floatLeft = this.HUD.joystickStartX;
-                this.HUD.leftPuck.floatTop = this.HUD.joystickStartY * -1;
-                this.HUD.leftPuck.left = this.HUD.leftPuck.floatLeft;
-                this.HUD.leftPuck.top = this.HUD.leftPuck.floatTop;
+                this.UI.joystickStartX = (coordinates.x - this.UI.leftJoystickTouchArea._currentMeasure.width * 0.5) - this.UI.LsideJoystickOffset;
+                this.UI.joystickStartY = (this.UI.playerUI.getBaseSize().height - coordinates.y - this.UI.leftJoystickTouchArea._currentMeasure.height * 0.5) - this.UI.LbottomJoystickOffset;
+                this.UI.leftPuck.floatLeft = this.UI.joystickStartX;
+                this.UI.leftPuck.floatTop = this.UI.joystickStartY * -1;
+                this.UI.leftPuck.left = this.UI.leftPuck.floatLeft;
+                this.UI.leftPuck.top = this.UI.leftPuck.floatTop;
             }
         });
 
-        this.HUD.rightPuck.onPointerDownObservable.add((coordinates) => {
-            this.HUD.rightPuck.alpha = 2;
+        this.UI.rightPuck.onPointerDownObservable.add((coordinates) => {
+            this.UI.rightPuck.alpha = 2;
             this.characterController.jump((true));
         });
 
-        this.HUD.rightPuck.onPointerUpObservable.add((coordinates) => {
-            this.HUD.rightPuck.alpha = 1;
+        this.UI.rightPuck.onPointerUpObservable.add((coordinates) => {
+            this.UI.rightPuck.alpha = 1;
             this.characterController.jump((false));
         });
 
@@ -257,36 +276,36 @@ class MainScene extends Component {
             };
 
             if (isLeftJoystickActive) {
-                this.HUD.joystickStartX = (coordinates.x - this.HUD.leftJoystickTouchArea._currentMeasure.width * 0.5) - this.HUD.LsideJoystickOffset;
-                this.HUD.joystickStartY = (this.HUD._playerUI.getBaseSize().height - coordinates.y - this.HUD.leftJoystickTouchArea._currentMeasure.height * 0.5) - this.HUD.LbottomJoystickOffset;
+                this.UI.joystickStartX = (coordinates.x - this.UI.leftJoystickTouchArea._currentMeasure.width * 0.5) - this.UI.LsideJoystickOffset;
+                this.UI.joystickStartY = (this.UI.playerUI.getBaseSize().height - coordinates.y - this.UI.leftJoystickTouchArea._currentMeasure.height * 0.5) - this.UI.LbottomJoystickOffset;
 
                 // distance from the center of the leftJoystickTouchArea to the new position
                 const distance = Math.sqrt(
-                    Math.pow(this.HUD.joystickStartX, 2) + Math.pow(this.HUD.joystickStartY, 2)
+                    Math.pow(this.UI.joystickStartX, 2) + Math.pow(this.UI.joystickStartY, 2)
                 );
 
                 // maximum distance from the center to stay inside the circle
-                const maxDistance = this.HUD.leftJoystickTouchArea._currentMeasure.width * 0.5;
+                const maxDistance = this.UI.leftJoystickTouchArea._currentMeasure.width * 0.5;
 
                 // values back to the circle boundary
                 if (distance > maxDistance) {
                     const scaleFactor = maxDistance / distance;
-                    this.HUD.joystickStartX *= scaleFactor;
-                    this.HUD.joystickStartY *= scaleFactor;
+                    this.UI.joystickStartX *= scaleFactor;
+                    this.UI.joystickStartY *= scaleFactor;
                 }
 
                 // leftPuck position update
-                this.HUD.leftPuck.floatLeft = this.HUD.joystickStartX;
-                this.HUD.leftPuck.floatTop = this.HUD.joystickStartY * -1;
-                this.HUD.leftPuck.left = this.HUD.leftPuck.floatLeft;
-                this.HUD.leftPuck.top = this.HUD.leftPuck.floatTop;
+                this.UI.leftPuck.floatLeft = this.UI.joystickStartX;
+                this.UI.leftPuck.floatTop = this.UI.joystickStartY * -1;
+                this.UI.leftPuck.left = this.UI.leftPuck.floatLeft;
+                this.UI.leftPuck.top = this.UI.leftPuck.floatTop;
             }
         };
 
         // check joystick position every frame and update camera rotation or movement
         this.scene.onBeforeRenderObservable.add(() => {
             if (isLeftJoystickActive) {
-                checkMoveControl(this.HUD.joystickStartX, this.HUD.joystickStartY);
+                checkMoveControl(this.UI.joystickStartX, this.UI.joystickStartY);
             } else {
                 checkMoveControl(0, 0);
             }
@@ -302,32 +321,32 @@ class MainScene extends Component {
                 this.characterController.turnRight((false));
             } else {
                 // Use the angle to determine the movement direction
-                this.HUD.joystickLXangle = Math.cos(angle);
-                this.HUD.joystickLYangle = Math.sin(angle);
+                this.UI.joystickLXangle = Math.cos(angle);
+                this.UI.joystickLYangle = Math.sin(angle);
 
                 //check 8 angles and set this.characterController
-                if (this.HUD.joystickLXangle > 0.5) {
+                if (this.UI.joystickLXangle > 0.5) {
                     this.characterController.turnRight(true);
                     this.characterController.turnLeft(false);
 
-                    if (this.HUD.joystickLYangle > 0.5) {
+                    if (this.UI.joystickLYangle > 0.5) {
                         this.characterController.walk(true);
                         this.characterController.walkBack(false);
-                    } else if (this.HUD.joystickLYangle < -0.5) {
+                    } else if (this.UI.joystickLYangle < -0.5) {
                         this.characterController.walk(false);
                         this.characterController.walkBack(true);
                     } else {
                         this.characterController.walk(false);
                         this.characterController.walkBack(false);
                     }
-                } else if (this.HUD.joystickLXangle < -0.5) {
+                } else if (this.UI.joystickLXangle < -0.5) {
                     this.characterController.turnLeft(true);
                     this.characterController.turnRight(false);
 
-                    if (this.HUD.joystickLYangle > 0.5) {
+                    if (this.UI.joystickLYangle > 0.5) {
                         this.characterController.walk(true);
                         this.characterController.walkBack(false);
-                    } else if (this.HUD.joystickLYangle < -0.5) {
+                    } else if (this.UI.joystickLYangle < -0.5) {
                         this.characterController.walk(false);
                         this.characterController.walkBack(true);
                     } else {
@@ -338,10 +357,10 @@ class MainScene extends Component {
                     this.characterController.turnLeft(false);
                     this.characterController.turnRight(false);
 
-                    if (this.HUD.joystickLYangle > 0.5) {
+                    if (this.UI.joystickLYangle > 0.5) {
                         this.characterController.walk(true);
                         this.characterController.walkBack(false);
-                    } else if (this.HUD.joystickLYangle < -0.5) {
+                    } else if (this.UI.joystickLYangle < -0.5) {
                         this.characterController.walk(false);
                         this.characterController.walkBack(true);
                     } else {
@@ -476,7 +495,6 @@ class MainScene extends Component {
             skel.deleteAnimationRange(ar.name, false);
         }
     }
-
 
     async getPortfolioData() {
         const result = await axios.get('https://api.atitkharel.com.np/portfolio/atit/')
