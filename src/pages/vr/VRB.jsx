@@ -9,6 +9,7 @@ function VRB() {
     const [loadingPercent, setLoadingPercent] = useState(0);
     const [opened, { open, close }] = useDisclosure(false);
     const [currentItem, setCurrentItem] = useState({});
+    const [pageTitle, setPageTitle] = useState('Loading');
 
     const handleCloseGModal = () => {
         close();
@@ -26,6 +27,12 @@ function VRB() {
             console.warn('Loading complete');
         }
     }, [loading]);
+
+    React.useEffect(() => {
+        if (pageTitle) {
+            document.title = `${pageTitle} | XR Portfolio`;
+        }
+    }, [pageTitle]);
 
     return (
         <>
@@ -47,7 +54,7 @@ function VRB() {
                 />
             </div>
 
-            <MainScene setLoading={setLoading} setLoadingPercent={setLoadingPercent} handleOpenGModal={handleOpenGModal} />
+            <MainScene setPageTitle={setPageTitle} setLoading={setLoading} setLoadingPercent={setLoadingPercent} handleOpenGModal={handleOpenGModal} />
         </>
     );
 }
