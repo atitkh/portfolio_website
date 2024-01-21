@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { MainScene } from '../../utils';
-import { Gallery, GalleryModal } from '../../components'
+import { GalleryModal, LoadingScreen } from '../../components'
 import './VRB.css';
 import { useDisclosure } from '@mantine/hooks';
 
@@ -22,7 +22,6 @@ function VRB() {
 
     React.useEffect(() => {
         if (!loading) {
-            document.getElementsByClassName('loader-container')[0].style.display = 'none';
             document.getElementsByClassName('overlay')[0].style.display = 'none';
             console.warn('Loading complete');
         }
@@ -31,19 +30,7 @@ function VRB() {
     return (
         <>
             <div className='overlay'>
-                <div className="loader-container">
-                    <div className="wrapper">
-                        <span className="circle circle-1"></span>
-                        <span className="circle circle-2"></span>
-                        <span className="circle circle-3"></span>
-                        <span className="circle circle-4"></span>
-                        <span className="circle circle-5"></span>
-                        <span className="circle circle-6"></span>
-                        <span className="circle circle-7"></span>
-                        <span className="circle circle-8"></span>
-                        <div className="loadingPercent">LOADING : {loadingPercent}%</div>
-                    </div>
-                </div>
+                <LoadingScreen progressColor="#00FF80" completed={loadingPercent} />
 
                 <GalleryModal
                     item={currentItem}
