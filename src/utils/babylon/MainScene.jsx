@@ -161,20 +161,9 @@ class MainScene extends Component {
             mesh.collisionRetryCount = 4;
 
             if (mesh.name.startsWith("Frame")) {
-                // mesh.actionManager = new BABYLON.ActionManager(this.scene);
-                // mesh.actionManager.registerAction(
-                //     new BABYLON.ExecuteCodeAction(
-                //         BABYLON.ActionManager.OnPickTrigger,
-                //         (evt) => {
-                //             this.props.handleOpenGModal(evt.source);
-                //         }
-                //     )
-                // );
                 totalLoadablePortfolio++;
             }
         });
-
-        // console.warn(`Total loadable portfolio: ${totalLoadablePortfolio}`);
 
         // get portfolio data
         const portfolioData = await this.getPortfolioData();
@@ -194,7 +183,6 @@ class MainScene extends Component {
                         () => {
                             totalLoadedPortfolio++;
                             portfolioProgress = (totalLoadedPortfolio * 100 / totalLoadablePortfolio).toFixed();
-                            // console.log(`Loading texture for ${item.title}: ${portfolioProgress}%`);
                             this.loadingProgress("portfolioData", portfolioProgress);
                         },
                         () => {
@@ -440,7 +428,7 @@ class MainScene extends Component {
             //between the two the player will start sliding down if it stops
             this.characterController.setSlopeLimit(30, 60);
 
-            this.characterController.setJumpSpeed(4.5);  //default 6 m/s
+            this.characterController.setJumpSpeed(4);  //default 6 m/s
 
             // set
             // - which animation range should be used for which player animation
