@@ -125,7 +125,7 @@ class MainScene extends Component {
         }));
 
         // load player model
-        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./player/", "Vincent-backFacing.babylon", this.scene, (evt) => {
+        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./player/", "player_ak_anim.glb", this.scene, (evt) => {
             // onProgress
             var loadedPercent = 0;
             if (evt.lengthComputable) {
@@ -136,8 +136,18 @@ class MainScene extends Component {
             }
             this.loadingProgress("playerModel", loadedPercent);
         }).then((result) => {
-            this.player = result.meshes[0]
+            this.player = result.meshes[0];
             this.player.skeleton = result.skeletons[0];
+
+            // since the model is glb
+            let animationGroups = result.animationGroups;
+            let agMap = {};
+            animationGroups.forEach((ag) => {
+                agMap[ag.name] = ag;
+            });
+            this.player.animationGroups = agMap;
+            this.player.rotation = this.player.rotationQuaternion.toEulerAngles();
+            this.player.rotationQuaternion = null;
         }));
     }
 
@@ -377,7 +387,7 @@ class MainScene extends Component {
             this.player.skeleton.enableBlending(0.1);
             this.player.scaling.scaleInPlace(2);
             //if the skeleton does not have any animation ranges then set them as below
-            // this.setAnimationRanges(skeleton);
+            // this.setAnimationRanges(this.player.skeleton);
 
             // var sm = this.player.material;
             // if (sm.diffuseTexture != null) {
@@ -414,8 +424,8 @@ class MainScene extends Component {
 
             this.mainCamera.attachControl();
 
-            this.characterController = new CharacterController(this.player, this.mainCamera, this.scene);
-            this.characterController.setFaceForward(false);
+            this.characterController = new CharacterController(this.player, this.mainCamera, this.scene, this.player.animationGroups);
+            this.characterController.setFaceForward(true);
             this.characterController.setMode(0);
             this.characterController.setTurnSpeed(45);
             this.characterController.setTurningOff(true);
@@ -430,19 +440,26 @@ class MainScene extends Component {
             //between the two the player will start sliding down if it stops
             this.characterController.setSlopeLimit(30, 60);
 
+            this.characterController.setJumpSpeed(4.5);  //default 6 m/s
+
             // set
             // - which animation range should be used for which player animation
             // - rate at which to play that animation range
             // - wether the animation range should be looped
             // use this if name, rate or looping is different from default
-            this.characterController.setIdleAnim("idle", 1, true);
-            this.characterController.setTurnLeftAnim("turnLeft", 0.5, true);
-            this.characterController.setTurnRightAnim("turnRight", 0.5, true);
-            this.characterController.setWalkBackAnim("walkBack", 0.5, true);
-            this.characterController.setIdleJumpAnim("idleJump", 0.5, false);
-            this.characterController.setRunJumpAnim("runJump", 0.6, false);
-            this.characterController.setFallAnim("fall", 2, false);
-            this.characterController.setSlideBackAnim("slideBack", 1, false);
+            // this.characterController.setIdleAnim("idle", 1, true);
+            // this.characterController.setTurnLeftAnim("turnLeft", 0.5, true);
+            // this.characterController.setTurnRightAnim("turnRight", 0.5, true);
+            // this.characterController.setWalkBackAnim("walkBack", 0.5, true);
+            // this.characterController.setIdleJumpAnim("idleJump", 0.5, false);
+            // this.characterController.setRunJumpAnim("runJump", 0.6, false);
+            // this.characterController.setFallAnim("fall", 2, false);
+            // this.characterController.setSlideBackAnim("slideBack", 1, false);
+            // this.characterController.setStrafeLeftAnim("strafeLeft", 0.5, true);
+            // this.characterController.setStrafeRightAnim("strafeRight", 0.5, true);
+            // this.characterController.setWalkAnim("walk", 0.5, true);
+            // this.characterController.setRunAnim("run", 1, true);
+
 
             // let walkSound = new BABYLON.Sound(
             //     "walk",
