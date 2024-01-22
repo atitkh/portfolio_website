@@ -5,6 +5,7 @@ import { CharacterController } from "babylonjs-charactercontroller";
 import { Inspector } from "@babylonjs/inspector";
 import axios from "axios";
 import { joystickController } from "./joystickController";
+import { AdvancedDynamicTexture, Control, TextBlock } from "@babylonjs/gui";
 
 class MainScene extends Component {
     constructor(props) {
@@ -74,6 +75,10 @@ class MainScene extends Component {
             this.scene.executeWhenReady(() => {
                 setTimeout(() => {
                     this.props.setLoading(false);
+
+                    this.characterController.pauseAnim();
+                    this.characterController.stop();
+                    this.showInstructions();
                 }, 1000);
             });
         });
@@ -389,7 +394,7 @@ class MainScene extends Component {
             this.player.ellipsoidOffset = new BABYLON.Vector3(0, 1, 0);
 
             //rotate the camera behind the player
-            this.player.rotation.y = Math.PI / 2;
+            this.player.rotation.y = Math.PI * 1.5;
             // var alpha = (Math.PI / 2 - this.player.rotation.y);
             var alpha = 0;
             var beta = Math.PI / 2;
@@ -409,6 +414,7 @@ class MainScene extends Component {
             this.mainCamera.lowerRadiusLimit = 2;
             //how far can the camera go from the player
             this.mainCamera.upperRadiusLimit = 10;
+            this.mainCamera.radius = 9;
 
             this.mainCamera.attachControl();
 
@@ -475,30 +481,53 @@ class MainScene extends Component {
         }
     }
 
-    setAnimationRanges(skel) {
-        this.delAnimRanges(skel);
+    showInstructions() {
+        let instructionClosed = false;
+        let waved = false;
+        let pointed = false;
 
-        skel.createAnimationRange("fall", 0, 16);
-        skel.createAnimationRange("idle", 21, 65);
-        skel.createAnimationRange("jump", 70, 94);
-        skel.createAnimationRange("run", 100, 121);
-        skel.createAnimationRange("slideBack", 125, 129);
-        skel.createAnimationRange("strafeLeft", 135, 179);
-        skel.createAnimationRange("strafeRight", 185, 229);
-        skel.createAnimationRange("turnLeft", 240, 262);
-        skel.createAnimationRange("turnRight", 270, 292);
-        skel.createAnimationRange("walk", 300, 335);
-        skel.createAnimationRange("walkBack", 340, 366);
-    }
+        this.scene.onBeforeRenderObservable.add(() => {
+            if (this.player.animationGroups) {
+                if (!instructionClosed) {
+                    if (!waved) {
+                        this.player.animationGroups["waveHello"].play();
+                        this.player.animationGroups["waveHello"].onAnimationEndObservable.add(() => {
+                            waved = true;
+                        });
+                    } else if (!pointed) {
+                        this.player.animationGroups["pointUp"].play();
+                        this.player.animationGroups["pointUp"].onAnimationEndObservable.add(() => {
+                            pointed = true;
+                        });
+                    } else {
+                        waved = false;
+                        pointed = false;
+                    }
+                } else {
+                    this.characterController.start();
+                    this.characterController.resumeAnim();
+                }
+            }
+        });
 
-    delAnimRanges(skel) {
-        let ars = skel.getAnimationRanges();
-        let l = ars.length;
-        for (let i = 0; i < l; i++) {
-            let ar = ars[i];
-            // console.log(ar.name + "," + ar.from + "," + ar.to);
-            skel.deleteAnimationRange(ar.name, false);
-        }
+        //instruction panel mesh
+        let instructionPanel = BABYLON.MeshBuilder.CreatePlane("instructionPanel", { width: 1.25, height: 1.25 }, this.scene);
+        instructionPanel.parent = this.player;
+        instructionPanel.position = new BABYLON.Vector3(0, 2.5, 0);
+        instructionPanel.checkCollisions = false;
+        // instructionPanel.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+
+        const instructionPanelData = require("./instructionPanel.json");
+        let instructionTexture = AdvancedDynamicTexture.CreateForMesh(instructionPanel, 600, 400, false);
+        instructionTexture.name = 'instructionTexture';
+        instructionTexture.parseSerializedObject(instructionPanelData, true);
+
+        let confirmButton = instructionTexture.getControlByName('button-bjs');
+        confirmButton.onPointerClickObservable.add(() => {
+            instructionClosed = true;
+            instructionPanel.dispose();
+            instructionTexture.dispose();
+        });
     }
 
     async getPortfolioData() {
