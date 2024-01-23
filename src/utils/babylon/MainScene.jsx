@@ -5,7 +5,7 @@ import { CharacterController } from "babylonjs-charactercontroller";
 import { Inspector } from "@babylonjs/inspector";
 import axios from "axios";
 import { joystickController } from "./joystickController";
-import { AdvancedDynamicTexture, Control, TextBlock } from "@babylonjs/gui";
+import { AdvancedDynamicTexture, Button, Control, TextBlock } from "@babylonjs/gui";
 
 class MainScene extends Component {
     constructor(props) {
@@ -397,7 +397,7 @@ class MainScene extends Component {
             this.player.rotation.y = Math.PI * 1.5;
             // var alpha = (Math.PI / 2 - this.player.rotation.y);
             var alpha = 0;
-            var beta = Math.PI / 2;
+            var beta = Math.PI / 1.8;
             var target = new BABYLON.Vector3(this.player.position.x, this.player.position.y + 3.5, this.player.position.z);
 
             this.mainCamera = new BABYLON.ArcRotateCamera("ArcRotateCamera", alpha, beta, 5, target, this.scene);
@@ -499,26 +499,20 @@ class MainScene extends Component {
                         this.player.animationGroups["pointUp"].onAnimationEndObservable.add(() => {
                             pointed = true;
                         });
-                    } else {
-                        waved = false;
-                        pointed = false;
                     }
-                } else {
-                    this.characterController.start();
-                    this.characterController.resumeAnim();
                 }
             }
         });
 
         //instruction panel mesh
-        let instructionPanel = BABYLON.MeshBuilder.CreatePlane("instructionPanel", { width: 1.25, height: 1.25 }, this.scene);
-        instructionPanel.parent = this.player;
-        instructionPanel.position = new BABYLON.Vector3(0, 2.5, 0);
+        let instructionPanel = BABYLON.MeshBuilder.CreatePlane("instructionPanel", { width: 2, height: 2 }, this.scene);
+        // instructionPanel.parent = this.player;
+        instructionPanel.position = new BABYLON.Vector3(this.player.position.x, this.player.position.y + 5, this.player.position.z);
         instructionPanel.checkCollisions = false;
-        // instructionPanel.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+        instructionPanel.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
 
         const instructionPanelData = require("./instructionPanel.json");
-        let instructionTexture = AdvancedDynamicTexture.CreateForMesh(instructionPanel, 600, 400, false);
+        let instructionTexture = AdvancedDynamicTexture.CreateForMesh(instructionPanel, 400, 400, false);
         instructionTexture.name = 'instructionTexture';
         instructionTexture.parseSerializedObject(instructionPanelData, true);
 
@@ -527,11 +521,58 @@ class MainScene extends Component {
             instructionClosed = true;
             instructionPanel.dispose();
             instructionTexture.dispose();
+            this.characterController.start();
+            this.characterController.resumeAnim()
+            waved = false;
+            pointed = false;
+
+            const targetAlpha = Math.PI / 2 - this.player.rotation.y;
+            const targetBeta = Math.PI / 2;
+            const targetRadius = 5;
+
+            // animate
+            BABYLON.Animation.CreateAndStartAnimation(
+                "cameraAnimation",
+                this.mainCamera,
+                "alpha",
+                60,
+                100,
+                this.mainCamera.alpha,
+                targetAlpha,
+                0,
+                new BABYLON.ExponentialEase(2).setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT)
+            );
+
+            BABYLON.Animation.CreateAndStartAnimation(
+                "cameraAnimation",
+                this.mainCamera,
+                "beta",
+                60,
+                100,
+                this.mainCamera.beta,
+                targetBeta,
+                0,
+                new BABYLON.ExponentialEase(2).setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT)
+            );
+
+            BABYLON.Animation.CreateAndStartAnimation(
+                "cameraAnimation",
+                this.mainCamera,
+                "radius",
+                60,
+                100,
+                this.mainCamera.radius,
+                targetRadius,
+                0,
+                new BABYLON.ExponentialEase(2).setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT)
+            );
         });
     }
 
     async getPortfolioData() {
-        const result = await axios.get('https://api.atitkharel.com.np/portfolio/atit/')
+        // const result = await axios.get('https://api.atitkharel.com.np/portfolio/atit/');
+        const result = { data: null };
+        result.data = require("./atit.json");
         this.mainTitle = result.data.title;
         this.props.setPageTitle(this.mainTitle);
         return (result.data.portfolio);
@@ -542,7 +583,8 @@ class MainScene extends Component {
             <>
                 <canvas ref={this.canvasRef}
                     id="renderCanvas"
-                    style={{ width: '100vw', height: '100vh', display: 'block' }} />
+                    style={{ width: '100%', height: '100vh', display: 'block' }}
+                />
             </>
         )
     }
