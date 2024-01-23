@@ -570,9 +570,9 @@ class MainScene extends Component {
     }
 
     async getPortfolioData() {
-        // const result = await axios.get('https://api.atitkharel.com.np/portfolio/atit/');
-        const result = { data: null };
-        result.data = require("./atit.json");
+        const result = await axios.get('https://api.atitkharel.com.np/portfolio/atit/');
+        // const result = { data: null };
+        // result.data = require("./atit.json");
         this.mainTitle = result.data.title;
         this.props.setPageTitle(this.mainTitle);
         return (result.data.portfolio);
