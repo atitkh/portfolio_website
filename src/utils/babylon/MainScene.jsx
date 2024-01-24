@@ -5,7 +5,7 @@ import { CharacterController } from "babylonjs-charactercontroller";
 import { Inspector } from "@babylonjs/inspector";
 import axios from "axios";
 import { joystickController } from "./joystickController";
-import { AdvancedDynamicTexture, Button, Control, TextBlock } from "@babylonjs/gui";
+import { AdvancedDynamicTexture } from "@babylonjs/gui";
 
 class MainScene extends Component {
     constructor(props) {
@@ -101,6 +101,21 @@ class MainScene extends Component {
         hdrTexture.gammaSpace = false;
         hdrTexture.setReflectionTextureMatrix(BABYLON.Matrix.RotationY(2.4));
         scene.environmentTexture = hdrTexture;
+
+        // sky
+        var skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000.0 }, scene);
+        var skyboxMaterial = new BABYLON.PBRMaterial("skyBox", scene);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = hdrTexture.clone();
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+        skyboxMaterial.microSurface = 1.0;
+        skyboxMaterial.disableLighting = true;
+        skyboxMaterial.twoSidedLighting = true;
+        skyboxMaterial._environmentBRDFTexture = hdrTexture.clone();
+        skyboxMaterial._environmentBRDFTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+        skyboxMaterial._environmentBRDFTexture.gammaSpace = false;
+        skybox.material = skyboxMaterial;
+
         // scene.onPointerDown = (evt) => {
         //     if (evt.button === 0) this.engine.enterPointerlock();
         //     if (evt.button === 1) this.engine.exitPointerlock();
@@ -120,7 +135,7 @@ class MainScene extends Component {
         BABYLON.SceneLoader.ShowLoadingScreen = false;
 
         // load room model
-        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./models/", "gallery.gltf", this.scene, (evt) => {
+        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./models/", "gallery.glb", this.scene, (evt) => {
             // onProgress
             var loadedPercent = 0;
             if (evt.lengthComputable) {
