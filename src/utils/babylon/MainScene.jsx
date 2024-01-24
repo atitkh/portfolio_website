@@ -91,8 +91,16 @@ class MainScene extends Component {
 
     createScene() {
         const scene = new BABYLON.Scene(this.engine);
-        new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 10, 0), scene);
+        // new BABYLON.HemisphericLight("hemi", new BABYLON.Vector3(0, 10, 0), scene);
+        var light = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(-1, -2, -1), scene);
+        light.position = new BABYLON.Vector3(20, 40, 20);
+        light.intensity = 1;
 
+        var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("https://playground.babylonjs.com/textures/Studio_Softbox_2Umbrellas_cube_specular.dds", scene);
+        hdrTexture.name = "envTex";
+        hdrTexture.gammaSpace = false;
+        hdrTexture.setReflectionTextureMatrix(BABYLON.Matrix.RotationY(2.4));
+        scene.environmentTexture = hdrTexture;
         // scene.onPointerDown = (evt) => {
         //     if (evt.button === 0) this.engine.enterPointerlock();
         //     if (evt.button === 1) this.engine.exitPointerlock();
@@ -103,7 +111,7 @@ class MainScene extends Component {
         scene.gravity = new BABYLON.Vector3(0, gravity / framesPerSecond, 0);
         scene.collisionsEnabled = true;
 
-        // Inspector.Show(this.scene, { embedMode: false });
+        Inspector.Show(this.scene, { embedMode: false });
 
         return scene;
     }
@@ -112,7 +120,7 @@ class MainScene extends Component {
         BABYLON.SceneLoader.ShowLoadingScreen = false;
 
         // load room model
-        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./models/", "vrModernGallery.gltf", this.scene, (evt) => {
+        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./models/", "gallery.gltf", this.scene, (evt) => {
             // onProgress
             var loadedPercent = 0;
             if (evt.lengthComputable) {
@@ -168,6 +176,14 @@ class MainScene extends Component {
             if (mesh.name.startsWith("Frame")) {
                 totalLoadablePortfolio++;
             }
+
+            if (mesh.name === "Glass") {
+                mesh.material.albedoTexture = new BABYLON.Texture(
+                    "./textures/transparent.png",
+                    this.scene
+                );
+                mesh.material.transparencyMode = BABYLON.PBRMaterial.PBRMATERIAL_ALPHABLEND;
+            }
         });
 
         // get portfolio data
@@ -219,7 +235,7 @@ class MainScene extends Component {
 
                     spotLight.parent = mesh.parent;
                     spotLight.position = this.spotLightPos;
-                    spotLight.intensity = 200;
+                    spotLight.intensity = 10;
                     spotLight.includedOnlyMeshes = [mesh, this.sceneModelMeshes[0]];
                 }
             });
@@ -388,7 +404,7 @@ class MainScene extends Component {
             //     sm.ambientColor = new BABYLON.Color3(1, 1, 1);
             // }
 
-            this.player.position = new BABYLON.Vector3(0, 10, 0);
+            this.player.position = new BABYLON.Vector3(19, 6, 40);
             this.player.checkCollisions = true;
             this.player.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
             this.player.ellipsoidOffset = new BABYLON.Vector3(0, 1, 0);
