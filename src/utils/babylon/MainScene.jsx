@@ -111,7 +111,7 @@ class MainScene extends Component {
         scene.gravity = new BABYLON.Vector3(0, gravity / framesPerSecond, 0);
         scene.collisionsEnabled = true;
 
-        Inspector.Show(this.scene, { embedMode: false });
+        // Inspector.Show(this.scene, { embedMode: false });
 
         return scene;
     }
