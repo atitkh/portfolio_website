@@ -38,22 +38,21 @@ function VRB() {
         <>
             <div className='overlay'>
                 <LoadingScreen progressColor="#00FF80" completed={loadingPercent} />
-
-                <GalleryModal
-                    item={currentItem}
-                    lensID={currentItem.lensID}
-                    opened={opened}
-                    onClose={handleCloseGModal}
-
-                    image={currentItem.image}
-                    title={currentItem.title}
-                    date={currentItem.date}
-                    description={currentItem.description}
-                    categories={currentItem.categories}
-                    projectLink={currentItem.projectLink}
-                />
             </div>
+            <div className='fps'></div>
+            <GalleryModal
+                item={currentItem}
+                lensID={currentItem.lensID}
+                opened={opened}
+                onClose={handleCloseGModal}
 
+                image={currentItem.image}
+                title={currentItem.title}
+                date={currentItem.date}
+                description={currentItem.description}
+                categories={currentItem.categories}
+                projectLink={currentItem.projectLink}
+            />
             <MainScene setPageTitle={setPageTitle} setLoading={setLoading} setLoadingPercent={setLoadingPercent} handleOpenGModal={handleOpenGModal} />
         </>
     );

@@ -4,3 +4,15 @@
     height: 100%;
     z-index: 9999;
 }
+
+.fps {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    color: #fff;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 0.5em;
+    background: rgba(0, 0, 0, 0.5);
+}

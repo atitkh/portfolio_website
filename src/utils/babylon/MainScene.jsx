@@ -5,7 +5,7 @@ import { CharacterController } from "babylonjs-charactercontroller";
 import { Inspector } from "@babylonjs/inspector";
 import axios from "axios";
 import { joystickController } from "./joystickController";
-import { AdvancedDynamicTexture } from "@babylonjs/gui";
+import { AdvancedDynamicTexture, TextBlock } from "@babylonjs/gui";
 
 class MainScene extends Component {
     constructor(props) {
@@ -60,6 +60,8 @@ class MainScene extends Component {
         if (this.UI.playerUI) this.createUI();
 
         this.engine.runRenderLoop(() => {
+            let divFps = document.getElementsByClassName("fps")[0];
+            divFps.innerHTML = this.engine.getFps().toFixed() + " fps";
             if (this.scene) {
                 this.scene.render();
             }
@@ -144,7 +146,7 @@ class MainScene extends Component {
                 // var dlCount = evt.loaded / (1024 * 1024);
                 // loadedPercent = Math.floor(dlCount * 100.0) / 100.0;
                 // custom value for now
-                var dlCount = evt.loaded / 8679524;
+                var dlCount = evt.loaded / 20349648;
                 loadedPercent = Math.floor(dlCount * 100.0);
             }
             this.loadingProgress("roomMeshes", loadedPercent);
@@ -209,7 +211,37 @@ class MainScene extends Component {
                 const meshName = `Frame.${paddedIndex}`;
                 const mesh = this.scene.getMeshByName(meshName);
                 if (mesh) {
-                    // totalLoadedPortfolio++;
+                    // action
+                    mesh.actionManager = new BABYLON.ActionManager(this.scene);
+                    // click
+                    mesh.actionManager.registerAction(
+                        new BABYLON.ExecuteCodeAction(
+                            BABYLON.ActionManager.OnPickTrigger,
+                            () => {
+                                this.props.handleOpenGModal(item);
+                            }
+                        )
+                    );
+                    //hover
+                    // mesh.actionManager.registerAction(
+                    //     new BABYLON.ExecuteCodeAction(
+                    //         BABYLON.ActionManager.OnPointerOverTrigger,
+                    //         () => {
+                    //             // overlay with learn more text 
+                    //             const learnMoreTexture = AdvancedDynamicTexture.CreateForMesh(mesh, 500, 100, false);
+                    //             learnMoreTexture.name = 'learnMoreTexture';
+                    //             const learnMoreText = new TextBlock('learnMoreText', 'Learn More');
+                    //             learnMoreText.color = "white";
+                    //             learnMoreText.fontSize = 40;
+                    //             learnMoreText.textWrapping = true;
+                    //             learnMoreText.textHorizontalAlignment = TextBlock.HORIZONTAL_ALIGNMENT_CENTER;
+                    //             learnMoreText.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
+                    //             learnMoreText.resizeToFit = true;
+                    //             learnMoreTexture.addControl(learnMoreText);
+                    //         }
+                    //     )
+                    // );
+                    // image
                     const texture = new BABYLON.Texture(
                         item.image,
                         this.scene,
@@ -227,6 +259,28 @@ class MainScene extends Component {
                         }
                     );
 
+                    // title
+                    const titleMesh = BABYLON.MeshBuilder.CreatePlane(
+                        "titleMesh" + meshName,
+                        { width: 1.25, height: 0.25 },
+                        this.scene
+                    );
+                    titleMesh.parent = mesh.parent;
+                    titleMesh.position = new BABYLON.Vector3(-0.046, -1.05, 0);
+                    titleMesh.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+
+                    const titleTexture = AdvancedDynamicTexture.CreateForMesh(titleMesh, 500, 100, false);
+                    titleTexture.name = 'titleTexture';
+                    const titleText = new TextBlock('titleText', item.title);
+                    titleText.color = "white";
+                    titleText.fontSize = 40;
+                    titleText.textWrapping = true;
+                    titleText.textHorizontalAlignment = TextBlock.HORIZONTAL_ALIGNMENT_CENTER;
+                    titleText.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
+                    titleText.resizeToFit = true;
+                    titleTexture.addControl(titleText);
+
+                    // material
                     const material = new BABYLON.PBRMaterial(
                         "material" + meshName,
                         this.scene
@@ -248,6 +302,7 @@ class MainScene extends Component {
                         this.scene
                     );
 
+                    // lighting
                     spotLight.parent = mesh.parent;
                     spotLight.position = this.spotLightPos;
                     spotLight.intensity = 10;
@@ -464,14 +519,19 @@ class MainScene extends Component {
             //the minimum and maximum slope the player can go up
             //between the two the player will start sliding down if it stops
             this.characterController.setSlopeLimit(30, 60);
-
+            // this.characterController.setGravity(this.scene.gravity.y);
             this.characterController.setJumpSpeed(4);  //default 6 m/s
+            this.characterController.setWalkSpeed(4); //default 3 m/s
+            // this.characterController.setRightFastSpeed(10); //default 3 m/s
+            // this.characterController.setLeftFastSpeed(10); //default 3 m/s
+            // this.characterController.setBackFastSpeed(10); //default 3 m/s
 
             // set
             // - which animation range should be used for which player animation
             // - rate at which to play that animation range
             // - wether the animation range should be looped
             // use this if name, rate or looping is different from default
+            // this.characterController.setRunJumpAnim(this.player.animationGroups["runJump"], 0.95, true);
             // this.characterController.setIdleAnim("idle", 1, true);
             // this.characterController.setTurnLeftAnim("turnLeft", 0.5, true);
             // this.characterController.setTurnRightAnim("turnRight", 0.5, true);
