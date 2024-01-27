@@ -24,7 +24,6 @@ function VRB() {
     React.useEffect(() => {
         if (!loading) {
             document.getElementsByClassName('overlay')[0].style.display = 'none';
-            console.warn('Loading complete');
         }
     }, [loading]);
 
