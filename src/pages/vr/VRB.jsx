@@ -47,6 +47,7 @@ function VRB() {
                 onClose={handleCloseGModal}
 
                 image={currentItem.image}
+                video={currentItem.video}
                 title={currentItem.title}
                 date={currentItem.date}
                 description={currentItem.description}

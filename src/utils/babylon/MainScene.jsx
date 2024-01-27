@@ -137,7 +137,7 @@ class MainScene extends Component {
         BABYLON.SceneLoader.ShowLoadingScreen = false;
 
         // load room model
-        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./models/", "gallery.glb", this.scene, (evt) => {
+        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "https://dl.dropbox.com/scl/fi/cstrm562p1zmgera8bau1/", "gallery.glb?rlkey=se2v9d73zjyy8tp5ecn7ot2pz", this.scene, (evt) => {
             // onProgress
             var loadedPercent = 0;
             if (evt.lengthComputable) {
@@ -155,7 +155,7 @@ class MainScene extends Component {
         }));
 
         // load player model
-        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "./player/", "player_ak_anim.glb", this.scene, (evt) => {
+        this.promiseArray.push(await BABYLON.SceneLoader.ImportMeshAsync("", "https://dl.dropbox.com/scl/fi/fsekzsa4t8sp1knos6qsn/", "player_ak_anim.glb?rlkey=effjdh05kjchm9wsmc99av800", this.scene, (evt) => {
             // onProgress
             var loadedPercent = 0;
             if (evt.lengthComputable) {
@@ -499,8 +499,8 @@ class MainScene extends Component {
             //how close can the camera come to player
             this.mainCamera.lowerRadiusLimit = 2;
             //how far can the camera go from the player
-            this.mainCamera.upperRadiusLimit = 10;
-            this.mainCamera.radius = 9;
+            this.mainCamera.upperRadiusLimit = 8;
+            this.mainCamera.radius = 8;
 
             this.mainCamera.attachControl();
 

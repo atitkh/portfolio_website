@@ -12,7 +12,7 @@ function Gallery({ key, image, video, title, description, projectLink, categorie
             <div className='gallery_container' style={{ cursor: 'pointer' }}>
                 <div className='gallery_item'>
                     <div className='gallery_item_image'>
-                        <img src={image} alt='gallery' key={key} />
+                        <img src={video ? video : image} alt='gallery' key={key} />
                     </div>
                     <div className="gallery_item_info_bg">
                     </div>

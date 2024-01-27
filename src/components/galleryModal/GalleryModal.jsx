@@ -5,7 +5,7 @@ import { SnapAR } from '../../pages';
 import { GitHub } from '@mui/icons-material';
 import { useMediaQuery } from '@mantine/hooks';
 
-function GalleryModal({ key, item, lensID, opened, onClose, image, title, date, description, categories, projectLink }) {
+function GalleryModal({ key, item, lensID, opened, onClose, image, video, title, date, description, categories, projectLink }) {
     const theme = useMantineTheme();
     const [startAR, setStartAR] = useState(false);
     const isMobile = useMediaQuery("(max-width: 50rem)");
@@ -81,7 +81,7 @@ function GalleryModal({ key, item, lensID, opened, onClose, image, title, date, 
                 }}>
                     <Image
                         withPlaceholder
-                        src={image}
+                        src={video ? video : image}
                         alt={title}
                         key={key}
                         radius="md"
