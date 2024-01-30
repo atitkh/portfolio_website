@@ -177,7 +177,7 @@ class MainScene extends Component {
                 // var dlCount = evt.loaded / (1024 * 1024);
                 // loadedPercent = Math.floor(dlCount * 100.0) / 100.0;
                 // custom value for now
-                var dlCount = evt.loaded / 21753176;
+                var dlCount = evt.loaded / 6121680;
                 loadedPercent = Math.floor(dlCount * 100.0);
             }
             this.loadingProgress("roomMeshes", loadedPercent);
