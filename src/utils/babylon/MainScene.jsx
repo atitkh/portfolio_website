@@ -16,6 +16,8 @@ class MainScene extends Component {
         this.engine = null;
         this.scene = null;
         this.mainCamera = null;
+        this.mapCamera = null;
+        this.mapPlayer = null;
         this.characterController = null;
 
         // model/meshes
@@ -57,13 +59,26 @@ class MainScene extends Component {
         this.createCharacterController();
 
         this.UI = new joystickController(this.scene, this.canvasRef.current, this.engine);
-        if (this.UI.playerUI) this.createUI();
+        if (this.UI.playerUI) {
+            this.createUI();
+            this.UI.playerUI.layer.layerMask = 1;
+        }
 
         this.engine.runRenderLoop(() => {
             let divFps = document.getElementsByClassName("fps")[0];
             divFps.innerHTML = this.engine.getFps().toFixed() + " fps";
+
             if (this.scene) {
                 this.scene.render();
+
+                // for minimap
+                this.mapPlayer.position.x = this.player.position.x;
+                this.mapPlayer.position.z = this.player.position.z;
+                this.mapPlayer.position.y = 1;
+
+                this.mapCamera.target.x = this.player.position.x;
+                this.mapCamera.target.z = this.player.position.z;
+                this.mapCamera.target.y = 0;
             }
         });
 
@@ -128,6 +143,22 @@ class MainScene extends Component {
         scene.gravity = new BABYLON.Vector3(0, gravity / framesPerSecond, 0);
         scene.collisionsEnabled = true;
 
+        // minimap camera
+        this.mapCamera = new BABYLON.ArcRotateCamera("MapCamera", 0, 0, 150, BABYLON.Vector3.Zero(), scene);
+        this.mapCamera.layerMask = 2;
+        this.mapCamera.viewport = new BABYLON.Viewport(0, 0, (2) / (this.canvasRef.current.width / 100) / 1.2, (2) / (this.canvasRef.current.height / 100) / 1.2);
+        this.mapCamera.minZ = 142;
+        this.mapCamera.fov = 0.3;
+
+        // minimap player
+        this.mapPlayer = BABYLON.MeshBuilder.CreateSphere("MapPlayer", { diameter: 2.5 }, scene);
+        this.mapPlayer.scaling.y = 5;
+        this.mapPlayer.material = new BABYLON.StandardMaterial("MapPlayerMaterial", scene);
+        this.mapPlayer.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
+        this.mapPlayer.material.specularColor = new BABYLON.Color3(0, 1, 0);
+        this.mapPlayer.material.emissiveColor = new BABYLON.Color3(0, 1, 0);
+        this.mapPlayer.layerMask = 2;
+
         // Inspector.Show(this.scene, { embedMode: false });
 
         return scene;
@@ -146,7 +177,7 @@ class MainScene extends Component {
                 // var dlCount = evt.loaded / (1024 * 1024);
                 // loadedPercent = Math.floor(dlCount * 100.0) / 100.0;
                 // custom value for now
-                var dlCount = evt.loaded / 20349648;
+                var dlCount = evt.loaded / 21753176;
                 loadedPercent = Math.floor(dlCount * 100.0);
             }
             this.loadingProgress("roomMeshes", loadedPercent);
@@ -266,7 +297,7 @@ class MainScene extends Component {
                         this.scene
                     );
                     titleMesh.parent = mesh.parent;
-                    titleMesh.position = new BABYLON.Vector3(-0.046, -1.05, 0);
+                    titleMesh.position = new BABYLON.Vector3(0, -1.05, 0);
                     titleMesh.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
 
                     const titleTexture = AdvancedDynamicTexture.CreateForMesh(titleMesh, 500, 100, false);
@@ -293,20 +324,20 @@ class MainScene extends Component {
                     mesh.material = material;
                     mesh.checkCollisions = true;
 
-                    var spotLight = new BABYLON.SpotLight(
-                        "spotLight" + index,
-                        this.spotLightPos,
-                        new BABYLON.Vector3(-0.6, -0.75, 0.1),
-                        Math.PI / 3,
-                        2,
-                        this.scene
-                    );
+                    // var spotLight = new BABYLON.SpotLight(
+                    //     "spotLight" + index,
+                    //     this.spotLightPos,
+                    //     new BABYLON.Vector3(-0.6, -0.75, 0.1),
+                    //     Math.PI / 3,
+                    //     2,
+                    //     this.scene
+                    // );
 
-                    // lighting
-                    spotLight.parent = mesh.parent;
-                    spotLight.position = this.spotLightPos;
-                    spotLight.intensity = 10;
-                    spotLight.includedOnlyMeshes = [mesh, this.sceneModelMeshes[0]];
+                    // // lighting
+                    // spotLight.parent = mesh.parent;
+                    // spotLight.position = this.spotLightPos;
+                    // spotLight.intensity = 10;
+                    // spotLight.includedOnlyMeshes = [mesh, this.sceneModelMeshes[0]];
                 }
             });
         }
@@ -474,7 +505,7 @@ class MainScene extends Component {
             //     sm.ambientColor = new BABYLON.Color3(1, 1, 1);
             // }
 
-            this.player.position = new BABYLON.Vector3(19, 6, 40);
+            this.player.position = new BABYLON.Vector3(19, 3, 40);
             this.player.checkCollisions = true;
             this.player.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
             this.player.ellipsoidOffset = new BABYLON.Vector3(0, 1, 0);
@@ -487,6 +518,13 @@ class MainScene extends Component {
             var target = new BABYLON.Vector3(this.player.position.x, this.player.position.y + 3.5, this.player.position.z);
 
             this.mainCamera = new BABYLON.ArcRotateCamera("ArcRotateCamera", alpha, beta, 5, target, this.scene);
+            this.mainCamera.layerMask = 1;
+            this.scene.activeCameras = [];
+            this.scene.activeCameras.push(this.mainCamera);
+            this.scene.activeCameras.push(this.mapCamera);
+
+            this.scene.cameraToUseForPointers = this.mainCamera;
+
             //standard camera setting
             this.mainCamera.wheelPrecision = 15;
             this.mainCamera.checkCollisions = true;
