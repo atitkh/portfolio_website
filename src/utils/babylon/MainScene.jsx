@@ -217,12 +217,25 @@ class MainScene extends Component {
         var totalLoadedPortfolio = 0;
         let portfolioProgress = 0;
 
+        let defaultTexture = new BABYLON.Texture(
+            "./textures/comingsoon-min.jpg",
+            this.scene
+        );
+
+        let defaultMaterial = new BABYLON.PBRMaterial("defaultMaterial", this.scene);
+        defaultMaterial.metallic = 0;
+        defaultMaterial.roughness = 1;
+        defaultMaterial.backFaceCulling = false;
+        defaultMaterial.albedoTexture = defaultTexture;
+
+
         this.sceneModelMeshes.forEach((mesh) => {
             mesh.checkCollisions = true;
             mesh.collisionRetryCount = 4;
 
             if (mesh.name.startsWith("Frame")) {
                 totalLoadablePortfolio++;
+                mesh.material = defaultMaterial;
             }
 
             if (mesh.name === "Glass") {
@@ -339,16 +352,18 @@ class MainScene extends Component {
                     // spotLight.intensity = 10;
                     // spotLight.includedOnlyMeshes = [mesh, this.sceneModelMeshes[0]];
                 }
-            });
+            })
         }
     }
 
     createUI() {
         let isLeftJoystickActive = false;
+        let pointer = null;
 
         // for left joystick
-        this.UI.leftJoystickTouchArea.onPointerDownObservable.add((coordinates) => {
+        this.UI.leftJoystickTouchArea.onPointerDownObservable.add((coordinates, state) => {
             isLeftJoystickActive = true;
+            pointer = state.userInfo.event.pointerId;
             this.UI.joystickStartX = (coordinates.x - this.UI.leftJoystickTouchArea._currentMeasure.width * 0.5) - this.UI.LsideJoystickOffset;
             this.UI.joystickStartY = (this.UI.playerUI.getBaseSize().height - coordinates.y - this.UI.leftJoystickTouchArea._currentMeasure.height * 0.5) - this.UI.LbottomJoystickOffset;
             this.UI.leftPuck.floatLeft = this.UI.joystickStartX;
@@ -360,6 +375,7 @@ class MainScene extends Component {
 
         this.UI.leftJoystickTouchArea.onPointerUpObservable.add((coordinates) => {
             isLeftJoystickActive = false;
+            pointer = null;
             this.UI.joystickStartX = 0;
             this.UI.joystickStartY = 0;
             this.UI.leftPuck.left = 0;
@@ -395,7 +411,7 @@ class MainScene extends Component {
                 y: event.clientY
             };
 
-            if (isLeftJoystickActive) {
+            if (isLeftJoystickActive && pointer === event.pointerId) {
                 this.UI.joystickStartX = (coordinates.x - this.UI.leftJoystickTouchArea._currentMeasure.width * 0.5) - this.UI.LsideJoystickOffset;
                 this.UI.joystickStartY = (this.UI.playerUI.getBaseSize().height - coordinates.y - this.UI.leftJoystickTouchArea._currentMeasure.height * 0.5) - this.UI.LbottomJoystickOffset;
 
