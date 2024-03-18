@@ -80,15 +80,15 @@ function Home() {
                         <h1>{mainTitle}</h1>
                     </div>
                     <div className="home_head_links">
-                        <Tooltip label="Coming Soon" withArrow>
-                            <Button
-                                variant="outline"
-                                style={{ marginRight: '1rem' }}
-                            // onClick={() => window.location.href = '/vr'}
-                            >
-                                TRY IN VR
-                            </Button>
-                        </Tooltip>
+                        {/* <Tooltip label="Coming Soon" withArrow> */}
+                        <Button
+                            variant="outline"
+                            style={{ marginRight: '1rem' }}
+                            onClick={() => window.location.href = '/vr'}
+                        >
+                            VIEW IN VR
+                        </Button>
+                        {/* </Tooltip> */}
                         <a href={socialLinks.github} target="_blank" rel="noreferrer"><h1><GitHub fontSize='large' /></h1></a>
                         <a href={socialLinks.linkedin} target="_blank" rel="noreferrer"><h1><LinkedIn fontSize='large' /></h1></a>
                         <a href={socialLinks.website} target="_blank" rel="noreferrer"><h1><Language fontSize='large' /></h1></a>
