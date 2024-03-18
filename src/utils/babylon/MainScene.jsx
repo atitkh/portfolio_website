@@ -5,7 +5,7 @@ import { CharacterController } from "babylonjs-charactercontroller";
 import { Inspector } from "@babylonjs/inspector";
 import axios from "axios";
 import { joystickController } from "./joystickController";
-import { AdvancedDynamicTexture, TextBlock } from "@babylonjs/gui";
+import { AdvancedDynamicTexture, Control, Rectangle, TextBlock } from "@babylonjs/gui";
 
 class MainScene extends Component {
     constructor(props) {
@@ -26,6 +26,11 @@ class MainScene extends Component {
         this.loadingPercent = 0;
         this.progressMap = {};
         this.promiseArray = [];
+
+        this.settings = {
+            instructionMode: 1,
+            enableGlow: false,
+        }
 
         this.spotLight = null;
         this.spotLightPos = new BABYLON.Vector3(3.85, 4.05, -0.40);
@@ -72,9 +77,11 @@ class MainScene extends Component {
                 this.scene.render();
 
                 // for minimap
-                this.mapPlayer.position.x = this.player.position.x;
-                this.mapPlayer.position.z = this.player.position.z;
-                this.mapPlayer.position.y = 1;
+                // this.mapPlayer.position.x = this.player.position.x;
+                // this.mapPlayer.position.z = this.player.position.z;
+                // this.mapPlayer.position.y = 6;
+
+                // this.mapPlayer.rotation.y = this.player.rotation.y + Math.PI;
 
                 this.mapCamera.target.x = this.player.position.x;
                 this.mapCamera.target.z = this.player.position.z;
@@ -93,9 +100,14 @@ class MainScene extends Component {
                 setTimeout(() => {
                     this.props.setLoading(false);
 
-                    this.characterController.pauseAnim();
-                    this.characterController.stop();
-                    this.showInstructions();
+                    if (this.settings.instructionMode === 0) {
+                        this.showInstructions();
+                        this.characterController.pauseAnim();
+                        this.characterController.stop();
+                    }
+                    else {
+                        this.showWallInstructions();
+                    }
                 }, 1000);
             });
         });
@@ -150,15 +162,6 @@ class MainScene extends Component {
         this.mapCamera.minZ = 142;
         this.mapCamera.fov = 0.3;
 
-        // minimap player
-        this.mapPlayer = BABYLON.MeshBuilder.CreateSphere("MapPlayer", { diameter: 2.5 }, scene);
-        this.mapPlayer.scaling.y = 5;
-        this.mapPlayer.material = new BABYLON.StandardMaterial("MapPlayerMaterial", scene);
-        this.mapPlayer.material.diffuseColor = new BABYLON.Color3(0, 1, 0);
-        this.mapPlayer.material.specularColor = new BABYLON.Color3(0, 1, 0);
-        this.mapPlayer.material.emissiveColor = new BABYLON.Color3(0, 1, 0);
-        this.mapPlayer.layerMask = 2;
-
         // Inspector.Show(this.scene, { embedMode: false });
 
         return scene;
@@ -183,6 +186,9 @@ class MainScene extends Component {
             this.loadingProgress("roomMeshes", loadedPercent);
         }).then((result) => {
             this.sceneModelMeshes = result.meshes;
+            if (this.settings.enableGlow) {
+                this.addGlow();
+            }
         }));
 
         // load player model
@@ -212,11 +218,27 @@ class MainScene extends Component {
         }));
     }
 
+    addGlow() {
+        var glow = new BABYLON.GlowLayer("glow", this.scene, {
+            mainTextureSamples: 4
+        });
+        //  only include meshes with name starting with frame
+        let frameMeshes = this.sceneModelMeshes.filter((mesh) => {
+            return mesh.name.startsWith("Cube.");
+        });
+        frameMeshes.forEach((mesh) => {
+            mesh.material.emissiveColor = BABYLON.Color3.White();
+            mesh.scaling.y += 0.01;
+            mesh.scaling.z += 0.01;
+        });
+    }
+
     async setupEnvironment() {
         var totalLoadablePortfolio = 0;
         var totalLoadedPortfolio = 0;
         let portfolioProgress = 0;
 
+        // default portfolio mat and texture
         let defaultTexture = new BABYLON.Texture(
             "./textures/comingsoon-min.jpg",
             this.scene
@@ -228,6 +250,20 @@ class MainScene extends Component {
         defaultMaterial.backFaceCulling = false;
         defaultMaterial.albedoTexture = defaultTexture;
 
+        // default nametag mat and texture
+        let defaultNametagMaterial = new BABYLON.PBRMaterial("defaultNametagMaterial", this.scene);
+        defaultNametagMaterial.metallic = 0;
+        defaultNametagMaterial.roughness = 1;
+        defaultNametagMaterial.backFaceCulling = false;
+        defaultNametagMaterial.albedoColor = new BABYLON.Color3(1, 1, 1);
+
+        let defaultNametagMesh = BABYLON.MeshBuilder.CreateBox(
+            "defaultNametagMesh",
+            { width: 1.2, height: 0.25 },
+            this.scene
+        );
+        defaultNametagMesh.isVisible = false;
+        defaultNametagMesh.material = defaultNametagMaterial;
 
         this.sceneModelMeshes.forEach((mesh) => {
             mesh.checkCollisions = true;
@@ -266,25 +302,28 @@ class MainScene extends Component {
                             }
                         )
                     );
-                    //hover
-                    // mesh.actionManager.registerAction(
-                    //     new BABYLON.ExecuteCodeAction(
-                    //         BABYLON.ActionManager.OnPointerOverTrigger,
-                    //         () => {
-                    //             // overlay with learn more text 
-                    //             const learnMoreTexture = AdvancedDynamicTexture.CreateForMesh(mesh, 500, 100, false);
-                    //             learnMoreTexture.name = 'learnMoreTexture';
-                    //             const learnMoreText = new TextBlock('learnMoreText', 'Learn More');
-                    //             learnMoreText.color = "white";
-                    //             learnMoreText.fontSize = 40;
-                    //             learnMoreText.textWrapping = true;
-                    //             learnMoreText.textHorizontalAlignment = TextBlock.HORIZONTAL_ALIGNMENT_CENTER;
-                    //             learnMoreText.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
-                    //             learnMoreText.resizeToFit = true;
-                    //             learnMoreTexture.addControl(learnMoreText);
-                    //         }
-                    //     )
-                    // );
+                    //hover in
+                    mesh.actionManager.registerAction(
+                        new BABYLON.ExecuteCodeAction(
+                            BABYLON.ActionManager.OnPointerOverTrigger,
+                            () => {
+                                mesh.scaling.x -= 0.01;
+                                mesh.scaling.z -= 0.01;
+                            }
+                        ),
+                    );
+
+                    //hover out
+                    mesh.actionManager.registerAction(
+                        new BABYLON.ExecuteCodeAction(
+                            BABYLON.ActionManager.OnPointerOutTrigger,
+                            () => {
+                                mesh.scaling.x += 0.01;
+                                mesh.scaling.z += 0.01;
+                            }
+                        ),
+                    );
+
                     // image
                     const texture = new BABYLON.Texture(
                         item.image,
@@ -303,21 +342,27 @@ class MainScene extends Component {
                         }
                     );
 
+                    // for transparent textures
+                    if (!this.settings.enableGlow) {
+                        texture.getAlphaFromRGB = true;
+                        texture.hasAlpha = true;
+                    }
+
                     // title
                     const titleMesh = BABYLON.MeshBuilder.CreatePlane(
                         "titleMesh" + meshName,
-                        { width: 1.25, height: 0.25 },
+                        { width: 1.2, height: 0.25 },
                         this.scene
                     );
                     titleMesh.parent = mesh.parent;
-                    titleMesh.position = new BABYLON.Vector3(0, -1.05, 0);
+                    titleMesh.position = new BABYLON.Vector3(0.08, -1.1, 0);
                     titleMesh.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
 
                     const titleTexture = AdvancedDynamicTexture.CreateForMesh(titleMesh, 500, 100, false);
                     titleTexture.name = 'titleTexture';
                     const titleText = new TextBlock('titleText', item.title);
-                    titleText.color = "white";
-                    titleText.fontSize = 40;
+                    titleText.color = "black";
+                    titleText.fontSize = 35;
                     titleText.textWrapping = true;
                     titleText.textHorizontalAlignment = TextBlock.HORIZONTAL_ALIGNMENT_CENTER;
                     titleText.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
@@ -336,6 +381,14 @@ class MainScene extends Component {
                     material.backFaceCulling = false;
                     mesh.material = material;
                     mesh.checkCollisions = true;
+
+                    // nametag box
+                    const nametagMesh = defaultNametagMesh.clone("nameTag." + meshName);
+                    nametagMesh.isVisible = true;
+                    nametagMesh.parent = mesh.parent;
+                    nametagMesh.position = new BABYLON.Vector3(0, -1.1, 0);
+                    nametagMesh.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+                    nametagMesh.scaling = new BABYLON.Vector3(1, 1, 0.08);
 
                     // var spotLight = new BABYLON.SpotLight(
                     //     "spotLight" + index,
@@ -525,6 +578,9 @@ class MainScene extends Component {
             this.player.checkCollisions = true;
             this.player.ellipsoid = new BABYLON.Vector3(0.5, 1, 0.5);
             this.player.ellipsoidOffset = new BABYLON.Vector3(0, 1, 0);
+            this.player.getChildMeshes().forEach((mesh) => {
+                mesh.layerMask = 1;
+            });
 
             //rotate the camera behind the player
             this.player.rotation.y = Math.PI * 1.5;
@@ -540,6 +596,17 @@ class MainScene extends Component {
             this.scene.activeCameras.push(this.mapCamera);
 
             this.scene.cameraToUseForPointers = this.mainCamera;
+
+            // minimap player
+            this.mapPlayer = BABYLON.MeshBuilder.CreateCylinder("MapPlayer", { diameter: 1, diameterTop: 0, height: 1.6 }, this.scene);
+            this.mapPlayer.rotation.x = Math.PI / 2;
+            this.mapPlayer.material = new BABYLON.StandardMaterial("MapPlayerMaterial", this.scene);
+            this.mapPlayer.material.diffuseColor = new BABYLON.Color3(0, 0.84, 1);
+            this.mapPlayer.material.specularColor = new BABYLON.Color3(0, 0.84, 1);
+            this.mapPlayer.material.emissiveColor = new BABYLON.Color3(0, 0.84, 1);
+            this.mapPlayer.layerMask = 2;
+            this.mapPlayer.parent = this.player;
+            this.mapPlayer.position = new BABYLON.Vector3(0, 2, 0.5);
 
             //standard camera setting
             this.mainCamera.wheelPrecision = 15;
@@ -650,14 +717,14 @@ class MainScene extends Component {
         });
 
         //instruction panel mesh
-        let instructionPanel = BABYLON.MeshBuilder.CreatePlane("instructionPanel", { width: 2, height: 2 }, this.scene);
+        let instructionPanel = BABYLON.MeshBuilder.CreatePlane("instructionPanel", { width: 6, height: 5 }, this.scene);
         // instructionPanel.parent = this.player;
         instructionPanel.position = new BABYLON.Vector3(this.player.position.x, this.player.position.y + 5, this.player.position.z);
         instructionPanel.checkCollisions = false;
         instructionPanel.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
 
         const instructionPanelData = require("./instructionPanel.json");
-        let instructionTexture = AdvancedDynamicTexture.CreateForMesh(instructionPanel, 400, 400, false);
+        let instructionTexture = AdvancedDynamicTexture.CreateForMesh(instructionPanel, 600, 500, false);
         instructionTexture.name = 'instructionTexture';
         instructionTexture.parseSerializedObject(instructionPanelData, true);
 
@@ -712,6 +779,30 @@ class MainScene extends Component {
                 new BABYLON.ExponentialEase(2).setEasingMode(BABYLON.EasingFunction.EASINGMODE_EASEOUT)
             );
         });
+    }
+
+    showWallInstructions() {
+        //rotate the camera behind the player
+        this.player.rotation.y = Math.PI / 2;
+        // var alpha = (Math.PI / 2 - this.player.rotation.y);
+        this.mainCamera.alpha = Math.PI;
+        this.mainCamera.beta = Math.PI / 2;
+
+        // instruction panel mesh
+        let instructionPanel = BABYLON.MeshBuilder.CreatePlane("instructionPanel", { width: 6, height: 5 }, this.scene);
+        // instructionPanel.parent = this.player;
+        instructionPanel.position = new BABYLON.Vector3(28, 5, 40);
+        instructionPanel.rotation = new BABYLON.Vector3(0, Math.PI / 2, 0);
+
+        let instructionMaterial = new BABYLON.PBRMaterial("instructionMaterial", this.scene);
+        instructionMaterial.metallic = 0;
+        instructionMaterial.roughness = 1;
+        instructionMaterial.backFaceCulling = false;
+        instructionMaterial.albedoTexture = new BABYLON.Texture(
+            "./textures/instruction/InstructionsPanel.png",
+            this.scene
+        );
+        instructionPanel.material = instructionMaterial;
     }
 
     async getPortfolioData() {

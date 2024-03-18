@@ -134,7 +134,7 @@ function GalleryModal({ key, item, lensID, opened, onClose, image, video, title,
                         }
 
                         {projectLink.map((item, index) => (
-                            <Button component="a" href={item} target='_blank' variant="filled" size='md' radius={'md'} style={{ marginTop: '0.5rem' }} leftIcon={
+                            <Button key={index} component="a" href={item} target='_blank' variant="filled" size='md' radius={'md'} style={{ marginTop: '0.5rem' }} leftIcon={
                                 item.includes('github.com') ? <GitHub /> : <IconExternalLink />
                             }>
                                 {item.includes('github.com') ? 'GitHub' :
