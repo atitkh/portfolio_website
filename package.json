@@ -18,7 +18,7 @@
     "@react-three/drei": "^9.74.9",
     "@react-three/fiber": "^8.13.2",
     "@react-three/xr": "^5.5.0",
-    "@snap/camera-kit": "^0.13.2",
+    "@snap/camera-kit": "^0.16.2",
     "@tabler/icons-react": "^2.22.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
