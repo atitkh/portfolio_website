@@ -98,11 +98,11 @@ function SnapAR(props) {
       let usableCams = [];
 
       // if lens has cameraFacingPreference, set cameraType to that
-      if (currentLens.cameraFacingPreference?.toLowerCase().includes('front')) {
-        usableCams = cameras.filter(({ label }) => label.toLowerCase().includes('front'));
+      if (currentLens.cameraFacingPreference?.toString().toLowerCase().includes('front')) {
+        usableCams = cameras.filter(({ label }) => label.toString().toLowerCase().includes('front'));
       }
       else {
-        usableCams = cameras.filter(({ label }) => label.toLowerCase().includes('back'));
+        usableCams = cameras.filter(({ label }) => label.toString().toLowerCase().includes('back'));
       }
 
       if (cameraSelect && usableCams.length > 0) {
