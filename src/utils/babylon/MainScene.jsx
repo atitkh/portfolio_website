@@ -5,7 +5,7 @@ import { CharacterController } from "babylonjs-charactercontroller";
 import { Inspector } from "@babylonjs/inspector";
 import axios from "axios";
 import { joystickController } from "./joystickController";
-import { AdvancedDynamicTexture, Control, Rectangle, TextBlock } from "@babylonjs/gui";
+import { AdvancedDynamicTexture, TextBlock } from "@babylonjs/gui";
 
 class MainScene extends Component {
     constructor(props) {
@@ -111,6 +111,22 @@ class MainScene extends Component {
                 }, 1000);
             });
         });
+
+        this.optimizeScene(this.scene);
+    }
+
+    optimizeScene(scene, options) {
+        options = new BABYLON.SceneOptimizerOptions()
+        options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1))
+        var optimizer = new BABYLON.SceneOptimizer(scene, options)
+        optimizer.start()
+        BABYLON.SceneOptimizer.OptimizeAsync(scene, BABYLON.SceneOptimizerOptions.HighDegradationAllowed(),
+            () => {
+                console.log("[OPTIMIZER] Scene optimized");
+            }, () => {
+                console.log("[OPTIMIZER] Scene optimization unsuccessfull");
+            });
+        return optimizer
     }
 
     componentWillUnmount() {
