@@ -45,6 +45,7 @@ function VRB() {
                 opened={opened}
                 onClose={handleCloseGModal}
 
+                win={currentItem.win}
                 image={currentItem.image}
                 video={currentItem.video}
                 title={currentItem.title}

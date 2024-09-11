@@ -102,8 +102,8 @@ function Home() {
                 </div>
                 <div className='home_gallery'>
                     {portfolioData.map((item, index) => (
-                        <>{currentCategory === "All" ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} image={item.image} win={item.win} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}
-                            {(item.mainCategory).includes(currentCategory) ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
+                        <>{currentCategory === "All" ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} win={item.win} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}
+                            {(item.mainCategory).includes(currentCategory) ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} win={item.win} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
                     ))}
                 </div>
                 <div className="home_footer">
