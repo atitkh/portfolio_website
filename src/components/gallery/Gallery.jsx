@@ -5,7 +5,7 @@ import './gallery.css'
 import { GitHub, Language } from "@mui/icons-material";
 import { IconBrandYoutube, IconPaperclip } from '@tabler/icons-react';
 
-function Gallery({ key, image, video, title, description, projectLink, categories, date }) {
+function Gallery({ key, image, win, video, title, description, projectLink, categories, date }) {
 
     return (
         <>
@@ -14,6 +14,13 @@ function Gallery({ key, image, video, title, description, projectLink, categorie
                     <div className='gallery_item_image'>
                         <img src={video ? video : image} alt='gallery' key={key} />
                     </div>
+                    {win &&
+                        <div className="gallery_item_winner">
+                            <div>
+                                <img src={`./textures/winner_${win.position}.png`} alt='gallery' key={key + 'win'} />
+                            </div>
+                        </div>
+                    }
                     <div className="gallery_item_info_bg">
                     </div>
                     <div className='gallery_item_info'>
@@ -28,9 +35,19 @@ function Gallery({ key, image, video, title, description, projectLink, categorie
                         </div>
                         <div className='gallery_item_info_categories'>
                             <p>
-                                {categories.map((item, index) => (
-                                    <span>{item} </span>
-                                ))}
+                                {
+                                    categories.map((item, index) => (
+                                        <span>{item} </span>
+                                    ))
+                                }
+                                {win &&
+                                    <span style={
+                                        win.position === 0 ? { backgroundColor: '#EFA900', color: '#474747' } :
+                                            win.position === 1 ? { backgroundColor: '#A4A4A4', color: '#F1F1F1' } :
+                                                win.position === 2 ? { backgroundColor: '#977547', color: '#F1F1F1' } :
+                                                    { color: '#FFFFFF' }
+                                    }>{win.hackathon}</span>
+                                }
                             </p>
                         </div>
 
@@ -47,7 +64,7 @@ function Gallery({ key, image, video, title, description, projectLink, categorie
                         </div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 }

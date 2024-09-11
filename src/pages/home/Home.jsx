@@ -32,7 +32,7 @@ function Home() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const result = await axios.get('https://api.atitkharel.com.np/portfolio/atit/')
+            const result = await axios.get('https://api.atitkharel.com.np/portfolio/atit/');
             setMainTitle(result.data.title);
             setSocialLinks(result.data.social_links);
             setCategories(result.data.main_categories);
@@ -66,6 +66,7 @@ function Home() {
                     opened={opened}
                     onClose={handleCloseModal}
 
+                    win={currentItem.win}
                     image={currentItem.image}
                     video={currentItem.video}
                     title={currentItem.title}
@@ -101,7 +102,7 @@ function Home() {
                 </div>
                 <div className='home_gallery'>
                     {portfolioData.map((item, index) => (
-                        <>{currentCategory === "All" ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}
+                        <>{currentCategory === "All" ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} image={item.image} win={item.win} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}
                             {(item.mainCategory).includes(currentCategory) ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
                     ))}
                 </div>

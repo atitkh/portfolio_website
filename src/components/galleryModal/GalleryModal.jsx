@@ -5,7 +5,7 @@ import { SnapAR } from '../../pages';
 import { GitHub } from '@mui/icons-material';
 import { useMediaQuery } from '@mantine/hooks';
 
-function GalleryModal({ key, item, lensID, opened, onClose, image, video, title, date, description, categories, projectLink }) {
+function GalleryModal({ key, item, lensID, opened, onClose, win, image, video, title, date, description, categories, projectLink }) {
     const theme = useMantineTheme();
     const [startAR, setStartAR] = useState(false);
     const isMobile = useMediaQuery("(max-width: 50rem)");
@@ -93,6 +93,18 @@ function GalleryModal({ key, item, lensID, opened, onClose, image, video, title,
                         }}
                     />
 
+                    {win &&
+                        <div style={{
+                            position: 'absolute',
+                            top: 0,
+                            right: 0,
+                        }}>
+                            <div>
+                                <img src={`./textures/winner_${win.position}.png`} alt='gallery' key={key + 'win'} />
+                            </div>
+                        </div>
+                    }
+
                     {/* start AR if lens id is present and button is clicked */}
                     {lensID && startAR && (
                         <>
@@ -122,6 +134,16 @@ function GalleryModal({ key, item, lensID, opened, onClose, image, video, title,
                                     {item}
                                 </Badge>
                             ))}
+                            {win &&
+                                <Badge radius='xl' style={
+                                    win.position === 0 ? { backgroundColor: '#EFA900', color: '#474747' } :
+                                        win.position === 1 ? { backgroundColor: '#A4A4A4', color: '#F1F1F1' } :
+                                            win.position === 2 ? { backgroundColor: '#977547', color: '#F1F1F1' } :
+                                                { color: '#FFFFFF' }
+                                }>
+                                    {win.hackathon + ' Winner'}
+                                </Badge>
+                            }
                         </Text>
 
                         {lensID &&
