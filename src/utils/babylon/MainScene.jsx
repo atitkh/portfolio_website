@@ -112,12 +112,12 @@ class MainScene extends Component {
             });
         });
 
-        this.optimizeScene(this.scene);
+        // this.optimizeScene(this.scene);
     }
 
     optimizeScene(scene, options) {
         options = new BABYLON.SceneOptimizerOptions()
-        options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1))
+        // options.addOptimization(new BABYLON.HardwareScalingOptimization(0, 1))
         var optimizer = new BABYLON.SceneOptimizer(scene, options)
         optimizer.start()
         BABYLON.SceneOptimizer.OptimizeAsync(scene, BABYLON.SceneOptimizerOptions.HighDegradationAllowed(),
