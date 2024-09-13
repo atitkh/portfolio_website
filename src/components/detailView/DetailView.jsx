@@ -13,7 +13,7 @@ function DetailView() {
 
         useEffect(() => {
                 const fetchData = async () => {
-                        const result = await axios.get(`https://api.atitkharel.com.np:3000/portfolio/atit/md?id=${id}`);
+                        const result = await axios.get(`https://api.atitkharel.com.np/portfolio/atit/md?id=${id}`);
                         setMarkdown(result.data);
 
                         setLoading(false);
