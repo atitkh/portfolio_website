@@ -1,11 +1,11 @@
 import { ActionIcon, Badge, Button, Group, Image, Modal, ScrollArea, Stack, Text, useMantineTheme } from '@mantine/core';
-import { IconAugmentedReality, IconExternalLink, IconX } from '@tabler/icons-react';
+import { IconArticle, IconAugmentedReality, IconExternalLink, IconX } from '@tabler/icons-react';
 import React, { useState } from 'react'
 import { SnapAR } from '../../pages';
 import { GitHub } from '@mui/icons-material';
 import { useMediaQuery } from '@mantine/hooks';
 
-function GalleryModal({ key, item, lensID, opened, onClose, win, image, video, title, date, description, categories, projectLink }) {
+function GalleryModal({ key, item, lensID, opened, onClose, image, video, title, date, description, categories, projectLink }) {
     const theme = useMantineTheme();
     const [startAR, setStartAR] = useState(false);
     const isMobile = useMediaQuery("(max-width: 50rem)");
@@ -93,14 +93,14 @@ function GalleryModal({ key, item, lensID, opened, onClose, win, image, video, t
                         }}
                     />
 
-                    {win &&
+                    {item.win &&
                         <div style={{
                             position: 'absolute',
                             top: 0,
                             right: 0,
                         }}>
                             <div>
-                                <img src={`./textures/winner_${win.position}.png`} alt='gallery' key={key + 'win'} />
+                                <img src={`/textures/winner_${item.win.position}.png`} alt='gallery' key={key + 'win'} />
                             </div>
                         </div>
                     }
@@ -134,14 +134,14 @@ function GalleryModal({ key, item, lensID, opened, onClose, win, image, video, t
                                     {item}
                                 </Badge>
                             ))}
-                            {win &&
+                            {item.win &&
                                 <Badge radius='xl' style={
-                                    win.position === 0 ? { backgroundColor: '#EFA900', color: '#474747' } :
-                                        win.position === 1 ? { backgroundColor: '#A4A4A4', color: '#F1F1F1' } :
-                                            win.position === 2 ? { backgroundColor: '#977547', color: '#F1F1F1' } :
+                                    item.win.position === 0 ? { backgroundColor: '#EFA900', color: '#474747' } :
+                                        item.win.position === 1 ? { backgroundColor: '#A4A4A4', color: '#F1F1F1' } :
+                                            item.win.position === 2 ? { backgroundColor: '#977547', color: '#F1F1F1' } :
                                                 { color: '#FFFFFF' }
                                 }>
-                                    {win.hackathon + ' Winner'}
+                                    {item.win.hackathon + ' Winner'}
                                 </Badge>
                             }
                         </Text>
@@ -167,6 +167,13 @@ function GalleryModal({ key, item, lensID, opened, onClose, win, image, video, t
                                 }
                             </Button>
                         ))}
+                        {item.more &&
+                            <Button key={'rmd'} component="a" href={`/more/${item.id}`} target='' variant="filled" size='md' radius={'md'} style={{ marginTop: '0.5rem' }} leftIcon={
+                                <IconArticle />
+                            }>
+                                Read More
+                            </Button>
+                        }
                     </Stack>
                 </div>
             </div>

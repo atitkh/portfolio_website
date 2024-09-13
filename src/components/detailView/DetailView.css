@@ -1,0 +1,228 @@
+.detail {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.detail_head {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 6rem;
+    width: auto;
+}
+
+.detail_head_name {
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
+    background-size: cover;
+    text-align: left;
+}
+
+.detail_head_name h1 {
+    width: 350px;
+    height: 38px;
+    left: 182px;
+    top: 28px;
+
+    font-family: 'Italiana';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 40px;
+    line-height: 38px;
+    text-transform: uppercase;
+    color: black;
+}
+
+.detail_head_links {
+    display: flex;
+    flex-direction: row;
+}
+
+.detail_head_links h1 {
+    margin: 0 0.5rem;
+    width: auto;
+    height: 38px;
+    color: rgb(114, 114, 114);
+}
+
+.detail_head_links h1:hover {
+    color: black;
+    transition: transform 0.25s ease-in-out;
+}
+
+.detail_categories {
+    /* display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    z-index: 2; */
+
+    display: grid;
+    grid-auto-flow: column;
+    justify-content: center;
+    align-items: center;
+    grid-template-columns: unset;
+    overflow: auto;
+    overflow-y: hidden;
+    overscroll-behavior-inline: contain;
+    width: 100%;
+    height: auto;
+    z-index: 0.5;
+}
+
+.detail_categories:before,:after {
+    display: block;
+}
+
+.detail_categories::-webkit-scrollbar {
+    /* remove scrollbar */
+    display: none;
+}
+
+.detail_categories p {
+    font-family: 'Italiana';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 24px;
+    color: black;
+    padding: 0 3rem;
+    text-transform: uppercase;
+    /* align */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.detail_title {
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.detail_body {
+    align-items: center;
+    padding: 0rem 5rem;
+    width: auto;
+}
+
+.detail_footer {
+    margin-top: auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0rem;
+    padding-bottom: 2rem;
+    width: auto;
+}
+
+.detail_footer p {
+    margin: 0;
+    width: auto;
+    color: black;
+
+    font-family: 'Italiana';
+    font-style: normal;
+
+    font-weight: 600;
+    font-size: 20px;
+    line-height: 38px;
+    text-transform: uppercase;
+
+    cursor: pointer;
+
+    text-align: center;
+    white-space: pre-wrap;
+}
+
+.detail_footer a {
+    text-decoration: none;
+}
+
+.detail_footer p:hover {
+    color: rgb(114, 114, 114);
+    transition: transform 0.25s ease-in-out;
+}
+
+
+/* categories selection */
+.active {
+    display: inline-block;
+    position: relative;
+    color: black;
+    cursor: pointer;
+}
+
+.active::after {
+    content: '';
+    position: absolute;
+    width: 85%;
+    transform: scaleX(1);
+    height: 2px;
+    bottom: 0;
+    left: 0.25;
+    background-color: black;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+}
+
+.inactive {
+    display: inline-block;
+    position: relative;
+    color: black;
+    cursor: pointer;
+}
+
+.inactive::after {
+    content: '';
+    position: absolute;
+    width: 85%;
+    transform: scaleX(0);
+    height: 1px;
+    bottom: 0;
+    left: 0.25;
+    background-color: black;
+    transform-origin: bottom right;
+    transition: transform 0.25s ease-out;
+}
+
+.inactive:hover::after {
+    transform: scaleX(1);
+    height: 1px;
+    transform-origin: bottom left;
+}
+
+
+@media screen and (max-width: 768px) {
+    .detail_head {
+        flex-direction: column;
+    }
+
+    .detail_head_name {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+
+    .detail_categories {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr;
+        justify-content: left;
+        overflow: auto;
+        overflow-y: hidden;
+        overscroll-behavior-inline: contain;
+    }
+
+    .detail_gallery {
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-rows: repeat(auto-fill, minmax(300px, 1fr));
+    }
+}
