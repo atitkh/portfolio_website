@@ -30,7 +30,7 @@ function DetailView() {
         }
         else {
                 return (
-                        document.title = ' | Portfolio Website',
+                        document.title = 'Read More | Portfolio Website',
 
                         <div className='detail'>
                                 <div className='detail_body'>
