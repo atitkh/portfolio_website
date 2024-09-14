@@ -39,7 +39,7 @@ const MainLayout = ({ children }) => {
             <div>
                 <header>
                     <div className="home_head">
-                        <a href="/">
+                        <a href="/" style={{ textDecoration: 'none' }}>
                             <div className="home_head_name">
                                 <h1>{mainTitle}</h1>
                             </div>
