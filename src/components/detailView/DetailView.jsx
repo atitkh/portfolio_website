@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Container } from '@mantine/core';
-import Markdown from 'react-markdown'
+import Markdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
+import remarkGfm from 'remark-gfm';
 import './DetailView.css'
 import axios from 'axios';
 import { useParams } from 'react-router-dom';
@@ -33,7 +35,7 @@ function DetailView() {
                         <div className='detail'>
                                 <div className='detail_body'>
                                         <Container c='#282828'>
-                                                <Markdown className='detail_markdown'>{markdown}</Markdown>
+                                                <Markdown className='detail_markdown' rehypePlugins={[rehypeRaw]} remarkPlugins={[remarkGfm]}>{markdown}</Markdown>
                                         </Container>
                                 </div>
                         </div>
