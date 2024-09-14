@@ -39,9 +39,11 @@ const MainLayout = ({ children }) => {
             <div>
                 <header>
                     <div className="home_head">
-                        <div className="home_head_name">
-                            <h1>{mainTitle}</h1>
-                        </div>
+                        <a href="/">
+                            <div className="home_head_name">
+                                <h1>{mainTitle}</h1>
+                            </div>
+                        </a>
                         <div className="home_head_links">
                             {/* <Tooltip label="Coming Soon" withArrow> */}
                             <Button
