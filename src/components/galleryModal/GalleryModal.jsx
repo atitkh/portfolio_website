@@ -100,7 +100,7 @@ function GalleryModal({ key, item, lensID, opened, onClose, image, video, title,
                             right: 0,
                         }}>
                             <div>
-                                <img src={`/textures/winner_${item.win.position}.png`} alt='gallery' key={key + 'win'} />
+                                <img src={`/textures/winner_${item.win.position}.png`} alt='gallery' key={key + 'win'} width={150} height={150} />
                             </div>
                         </div>
                     }

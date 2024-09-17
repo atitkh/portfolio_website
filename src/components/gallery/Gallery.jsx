@@ -17,7 +17,7 @@ function Gallery({ key, image, win, video, title, description, projectLink, cate
                     {win &&
                         <div className="gallery_item_winner">
                             <div>
-                                <img src={`/textures/winner_${win.position}.png`} alt='gallery' key={key + 'win'} />
+                                <img src={`/textures/winner_${win.position}.png`} alt='gallery' key={key + 'win'} width={112} height={112} />
                             </div>
                         </div>
                     }
