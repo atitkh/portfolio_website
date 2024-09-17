@@ -136,9 +136,9 @@ function GalleryModal({ key, item, lensID, opened, onClose, image, video, title,
                             ))}
                             {item.win &&
                                 <Badge radius='xl' style={
-                                    item.win.position === 0 ? { backgroundColor: '#EFA900', color: '#474747' } :
-                                        item.win.position === 1 ? { backgroundColor: '#A4A4A4', color: '#F1F1F1' } :
-                                            item.win.position === 2 ? { backgroundColor: '#977547', color: '#F1F1F1' } :
+                                    item.win.position === 0 ? { backgroundColor: '#FFB400', color: '#474747' } :
+                                            item.win.position === 1 ? { backgroundColor: '#A4A4A4', color: '#F1F1F1' } :
+                                                item.win.position === 2 ? { backgroundColor: '#BF822E', color: '#F1F1F1' } :
                                                 { color: '#FFFFFF' }
                                 }>
                                     {item.win.hackathon + ' Winner'}
