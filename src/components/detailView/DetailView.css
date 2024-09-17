@@ -75,7 +75,8 @@
     z-index: 0.5;
 }
 
-.detail_categories:before,:after {
+.detail_categories:before,
+:after {
     display: block;
 }
 
