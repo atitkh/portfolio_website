@@ -42,9 +42,9 @@ function Gallery({ key, image, win, video, title, description, projectLink, cate
                                 }
                                 {win &&
                                     <span style={
-                                        win.position === 0 ? { backgroundColor: '#EFA900', color: '#474747' } :
+                                        win.position === 0 ? { backgroundColor: '#FFB400', color: '#474747' } :
                                             win.position === 1 ? { backgroundColor: '#A4A4A4', color: '#F1F1F1' } :
-                                                win.position === 2 ? { backgroundColor: '#977547', color: '#F1F1F1' } :
+                                                win.position === 2 ? { backgroundColor: '#BF822E', color: '#F1F1F1' } :
                                                     { color: '#FFFFFF' }
                                     }>{win.hackathon}</span>
                                 }
