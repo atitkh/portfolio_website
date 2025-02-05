@@ -47,6 +47,11 @@ function Home() {
         );
     }
     else {
+        const validCategories = categories.filter(category =>
+            portfolioData.some(item => item.mainCategory.includes(category))
+        );
+        validCategories.unshift('All');
+
         return (
             // main page
             <div className='home'>
@@ -66,14 +71,28 @@ function Home() {
                     projectLink={currentItem.projectLink}
                 />
                 <div className="home_categories">
-                    {categories.map((item, index) => (
-                        <div><p onClick={() => setCurrentCategory(item)} className={currentCategory === item ? 'active' : 'inactive'}>{item}</p></div>
-                    ))}
+                    <div className="home_categories_arrow left" onClick={() => document.querySelector('.home_categories_inner').scrollBy({ left: -200, behavior: 'smooth' })}>&lt;</div>
+                    <div className="home_categories_inner">
+                        {validCategories.map((item, index) => (
+                            <div key={index}><p onClick={() => setCurrentCategory(item)} className={currentCategory === item ? 'active' : 'inactive'}>{item}</p></div>
+                        ))}
+                    </div>
+                    <div className="home_categories_arrow right" onClick={() => document.querySelector('.home_categories_inner').scrollBy({ left: 200, behavior: 'smooth' })}>&gt;</div>
                 </div>
                 <div className='home_gallery'>
                     {portfolioData.map((item, index) => (
-                        <>{currentCategory === "All" ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} win={item.win} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}
-                            {(item.mainCategory).includes(currentCategory) ? <div onClick={() => handleOpenModal(item)}><Gallery key={item.id} lensID={item.lensID} win={item.win} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} /></div> : null}</>
+                        <React.Fragment key={index}>
+                            {currentCategory === "All" ?
+                                <div onClick={() => handleOpenModal(item)}>
+                                    <Gallery key={item.id} lensID={item.lensID} win={item.win} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} />
+                                </div>
+                                : null}
+                            {(item.mainCategory).includes(currentCategory) ?
+                                <div onClick={() => handleOpenModal(item)}>
+                                    <Gallery key={item.id} lensID={item.lensID} win={item.win} image={item.image} video={item.video} title={item.title} description={item.description} projectLink={item.projectLink} categories={item.categories} date={item.date} />
+                                </div>
+                                : null}
+                        </React.Fragment>
                     ))}
                 </div>
             </div>
