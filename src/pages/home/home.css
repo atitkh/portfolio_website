@@ -48,10 +48,12 @@
     width: auto;
     height: 38px;
     color: rgb(114, 114, 114);
+    fill: rgb(114, 114, 114);
 }
 
 .home_head_links h1:hover {
     color: black;
+    fill: black;
     transition: transform 0.25s ease-in-out;
 }
 
