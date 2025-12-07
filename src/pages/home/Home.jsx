@@ -72,8 +72,13 @@ function Home() {
             return new Date(dateStr);
         };
 
-        // Sorting logic
+        // Sorting logic - prioritize win items, then sort within each group
         const sortedPortfolio = [...portfolioData].sort((a, b) => {
+            // First, prioritize items with win key
+            if (a.win && !b.win) return -1;
+            if (!a.win && b.win) return 1;
+            
+            // Then sort by selected option within each group
             if (sortOption === 'Newest') {
                 return parseFlexibleDate(b.date) - parseFlexibleDate(a.date);
             } else if (sortOption === 'Oldest') {
@@ -105,20 +110,32 @@ function Home() {
                     categories={currentItem.categories}
                     projectLink={currentItem.projectLink}
                 />
-                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', margin: '8px 0' }}>
+                <div className="home_categories">
                     <select
                         value={sortOption}
                         onChange={e => setSortOption(e.target.value)}
-                        style={{ padding: '2px 8px', borderRadius: 4, border: '1px solid #ccc', background: 'transparent', fontSize: 14 }}
+                        style={{ 
+                            fontFamily: 'Italiana',
+                            fontSize: '18px',
+                            fontWeight: 600,
+                            textTransform: 'uppercase',
+                            background: 'transparent',
+                            border: 'none',
+                            outline: 'none',
+                            cursor: 'pointer',
+                            padding: '0 1rem',
+                            color: 'black',
+                            appearance: 'none',
+                            WebkitAppearance: 'none',
+                            MozAppearance: 'none'
+                        }}
                         aria-label="Sort listings"
                     >
-                        <option value="Newest">Newest</option>
-                        <option value="Oldest">Oldest</option>
+                        <option value="Newest">↓ Newest</option>
+                        <option value="Oldest">↑ Oldest</option>
                         <option value="A-Z">A-Z</option>
                         <option value="Z-A">Z-A</option>
                     </select>
-                </div>
-                <div className="home_categories">
                     <div className="home_categories_arrow left" onClick={() => document.querySelector('.home_categories_inner').scrollBy({ left: -200, behavior: 'smooth' })}>&lt;</div>
                     <div className="home_categories_inner">
                         {validCategories.map((item, index) => (
