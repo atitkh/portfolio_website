@@ -126,7 +126,7 @@ function GalleryModal({ key, item, lensID, opened, onClose, image, video, title,
 
                 <div style={{ flex: 1 }}>
                     <Stack spacing={0}>
-                        <Text size='2rem' weight={700}>{title}</Text>
+                        <Text size='2rem' weight={700} style={{ paddingBottom: '0.5rem', lineHeight: 1.2 }}>{title}</Text>
                         <Text size='md' weight={500} color='dimmed'>{date}</Text>
                         {citations > 0 && (
                             <Text size='sm' color='dimmed' style={{ marginTop: '0.5rem' }}>{citations} Citations</Text>
