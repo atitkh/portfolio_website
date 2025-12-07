@@ -66,6 +66,7 @@ function Home() {
                     video={currentItem.video}
                     title={currentItem.title}
                     date={currentItem.date}
+                    citations={currentItem?.metadata?.citations || 0}
                     description={currentItem.description}
                     categories={currentItem.categories}
                     projectLink={currentItem.projectLink}
