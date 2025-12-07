@@ -16,7 +16,7 @@ const MainLayout = ({ children }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            axios.get('https://api.atitkharel.com.np/portfolio/atit/').then((result) => {
+            axios.get('https://api.atitkharel.com.np/portfolio/atit/full').then((result) => {
 
                 setMainTitle(result.data.title);
                 setSocialLinks(result.data.social_links);
