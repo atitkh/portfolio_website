@@ -145,7 +145,7 @@ function GalleryModal({ key, item, lensID, opened, onClose, image, video, title,
                                             item.win.position === 2 ? { backgroundColor: '#BF822E', color: '#F1F1F1' } :
                                                 { color: '#FFFFFF' }
                                 }>
-                                    {item.win.hackathon + ' Winner'}
+                                    {(item.win?.hackathon || item.win?.category) + ' Winner'}
                                 </Badge>
                             }
                         </Text>

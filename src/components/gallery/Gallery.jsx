@@ -37,7 +37,7 @@ function Gallery({ key, image, win, video, title, description, projectLink, cate
                             <p>
                                 {
                                     categories.map((item, index) => (
-                                        <span>{item} </span>
+                                        <span key={index}>{item} </span>
                                     ))
                                 }
                                 {win &&
@@ -46,14 +46,14 @@ function Gallery({ key, image, win, video, title, description, projectLink, cate
                                             win.position === 1 ? { backgroundColor: '#A4A4A4', color: '#F1F1F1' } :
                                                 win.position === 2 ? { backgroundColor: '#BF822E', color: '#F1F1F1' } :
                                                     { color: '#FFFFFF' }
-                                    }>{win.hackathon}</span>
+                                    }>{win?.hackathon || win?.category}</span>
                                 }
                             </p>
                         </div>
 
                         <div className='gallery_item_info_url' sx={{ zIndex: '100' }}>
                             {projectLink.map((item, index) => (
-                                <a href={item} target='_blank' rel='noreferrer'>
+                                <a key={index} href={item} target='_blank' rel='noreferrer'>
                                     {item.includes('github.com') ? <GitHub /> :
                                         item.includes('devpost.com') ? <IconPaperclip /> :
                                             (item.includes('/pdf?') || item.includes('.pdf')) ? <IconFileTypePdf /> :
