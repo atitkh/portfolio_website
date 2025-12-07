@@ -16,6 +16,7 @@ function Home() {
     const [currentCategory, setCurrentCategory] = useState('All')
     const [portfolioData, setPortfolio] = useState([])
     const [loading, setLoading] = useState(true)
+    const [sortOption, setSortOption] = useState('Newest');
 
     const { allPortfolioData } = React.useContext(DataContext);
 
@@ -52,6 +53,39 @@ function Home() {
         );
         validCategories.unshift('All');
 
+        // Helper function to parse flexible date formats
+        const parseFlexibleDate = (dateStr) => {
+            if (!dateStr) return new Date(0);
+            
+            // Try parsing as-is first
+            const parsed = new Date(dateStr);
+            if (!isNaN(parsed)) return parsed;
+            
+            // If just a year (e.g., "2025")
+            if (/^\d{4}$/.test(dateStr.trim())) {
+                return new Date(dateStr);
+            }
+            
+            // If year and month (e.g., "March 2025", "2025-03")
+            // If full date (e.g., "March 20, 2025")
+            // Date constructor handles most formats
+            return new Date(dateStr);
+        };
+
+        // Sorting logic
+        const sortedPortfolio = [...portfolioData].sort((a, b) => {
+            if (sortOption === 'Newest') {
+                return parseFlexibleDate(b.date) - parseFlexibleDate(a.date);
+            } else if (sortOption === 'Oldest') {
+                return parseFlexibleDate(a.date) - parseFlexibleDate(b.date);
+            } else if (sortOption === 'A-Z') {
+                return a.title.localeCompare(b.title);
+            } else if (sortOption === 'Z-A') {
+                return b.title.localeCompare(a.title);
+            }
+            return 0;
+        });
+
         return (
             // main page
             <div className='home'>
@@ -71,6 +105,19 @@ function Home() {
                     categories={currentItem.categories}
                     projectLink={currentItem.projectLink}
                 />
+                <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', margin: '8px 0' }}>
+                    <select
+                        value={sortOption}
+                        onChange={e => setSortOption(e.target.value)}
+                        style={{ padding: '2px 8px', borderRadius: 4, border: '1px solid #ccc', background: 'transparent', fontSize: 14 }}
+                        aria-label="Sort listings"
+                    >
+                        <option value="Newest">Newest</option>
+                        <option value="Oldest">Oldest</option>
+                        <option value="A-Z">A-Z</option>
+                        <option value="Z-A">Z-A</option>
+                    </select>
+                </div>
                 <div className="home_categories">
                     <div className="home_categories_arrow left" onClick={() => document.querySelector('.home_categories_inner').scrollBy({ left: -200, behavior: 'smooth' })}>&lt;</div>
                     <div className="home_categories_inner">
@@ -81,7 +128,7 @@ function Home() {
                     <div className="home_categories_arrow right" onClick={() => document.querySelector('.home_categories_inner').scrollBy({ left: 200, behavior: 'smooth' })}>&gt;</div>
                 </div>
                 <div className='home_gallery'>
-                    {portfolioData.map((item, index) => (
+                    {sortedPortfolio.map((item, index) => (
                         <React.Fragment key={index}>
                             {currentCategory === "All" ?
                                 <div onClick={() => handleOpenModal(item)}>
