@@ -56,16 +56,16 @@ function Home() {
         // Helper function to parse flexible date formats
         const parseFlexibleDate = (dateStr) => {
             if (!dateStr) return new Date(0);
-            
+
             // Try parsing as-is first
             const parsed = new Date(dateStr);
             if (!isNaN(parsed)) return parsed;
-            
+
             // If just a year (e.g., "2025")
             if (/^\d{4}$/.test(dateStr.trim())) {
                 return new Date(dateStr);
             }
-            
+
             // If year and month (e.g., "March 2025", "2025-03")
             // If full date (e.g., "March 20, 2025")
             // Date constructor handles most formats
@@ -77,7 +77,7 @@ function Home() {
             // First, prioritize items with win key
             if (a.win && !b.win) return -1;
             if (!a.win && b.win) return 1;
-            
+
             // Then sort by selected option within each group
             if (sortOption === 'Newest') {
                 return parseFlexibleDate(b.date) - parseFlexibleDate(a.date);
@@ -111,31 +111,6 @@ function Home() {
                     projectLink={currentItem.projectLink}
                 />
                 <div className="home_categories">
-                    <select
-                        value={sortOption}
-                        onChange={e => setSortOption(e.target.value)}
-                        style={{ 
-                            fontFamily: 'Italiana',
-                            fontSize: '18px',
-                            fontWeight: 600,
-                            textTransform: 'uppercase',
-                            background: 'transparent',
-                            border: 'none',
-                            outline: 'none',
-                            cursor: 'pointer',
-                            padding: '0 1rem',
-                            color: 'black',
-                            appearance: 'none',
-                            WebkitAppearance: 'none',
-                            MozAppearance: 'none'
-                        }}
-                        aria-label="Sort listings"
-                    >
-                        <option value="Newest">↓ Newest</option>
-                        <option value="Oldest">↑ Oldest</option>
-                        <option value="A-Z">A-Z</option>
-                        <option value="Z-A">Z-A</option>
-                    </select>
                     <div className="home_categories_arrow left" onClick={() => document.querySelector('.home_categories_inner').scrollBy({ left: -200, behavior: 'smooth' })}>&lt;</div>
                     <div className="home_categories_inner">
                         {validCategories.map((item, index) => (
@@ -144,6 +119,19 @@ function Home() {
                     </div>
                     <div className="home_categories_arrow right" onClick={() => document.querySelector('.home_categories_inner').scrollBy({ left: 200, behavior: 'smooth' })}>&gt;</div>
                 </div>
+                {/* <div className="home_sort">
+                        <select
+                            value={sortOption}
+                            onChange={e => setSortOption(e.target.value)}
+                            className="home_sort_select"
+                            aria-label="Sort listings"
+                        >
+                            <option value="Newest">↓ Newest</option>
+                            <option value="Oldest">↑ Oldest</option>
+                            <option value="A-Z">A-Z</option>
+                            <option value="Z-A">Z-A</option>
+                        </select>
+                    </div> */}
                 <div className='home_gallery'>
                     {sortedPortfolio.map((item, index) => (
                         <React.Fragment key={index}>

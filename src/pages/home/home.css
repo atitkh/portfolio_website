@@ -102,6 +102,34 @@
     right: 0;
 }
 
+.home_sort {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+}
+
+.home_sort_select {
+    font-family: 'Italiana';
+    font-style: normal;
+    font-weight: 600;
+    font-size: 18px;
+    text-transform: uppercase;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 0 0.75rem;
+    color: black;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+.home_sort_select option {
+    color: black;
+}
+
 .home_categories p {
     font-family: 'Italiana';
     font-style: normal;
